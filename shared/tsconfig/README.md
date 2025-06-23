@@ -1,10 +1,10 @@
 # @beach-box/tsconfig
 
-Shared TypeScript configurations for the beach Box monorepo, providing consistent compiler settings, build optimization, and type checking across all applications and packages.
+Shared TypeScript configurations for the Beach Box monorepo, providing consistent compiler settings, build optimization, and type checking across all applications and packages.
 
 ## Overview
 
-This package contains standardized TypeScript configurations for different project types within the beach Box monorepo. It ensures consistent compilation settings, optimal performance, and proper type checking across all applications and libraries.
+This package contains standardized TypeScript configurations for different project types within the Beach Box monorepo. It ensures consistent compilation settings, optimal performance, and proper type checking across all applications and libraries.
 
 ## Features
 
@@ -46,18 +46,18 @@ Core TypeScript settings for all projects:
 - Optimized build settings
 - Comprehensive lib references
 
-### React Configuration (`react.json`)
+### React Vite Configuration (`react-vite.json`)
 
-Specialized configuration for React applications:
+Specialized configuration for React + Vite applications:
 
 ```json
 // tsconfig.json
 {
-  "extends": "@beach-box/tsconfig/react.json",
+  "extends": "@beach-box/tsconfig/react-vite.json",
   "compilerOptions": {
     "outDir": "./dist"
   },
-  "include": ["src/**/*"],
+  "include": ["src/**/*", "vite.config.ts"],
   "exclude": ["node_modules", "dist", "build"]
 }
 ```
@@ -66,12 +66,36 @@ Specialized configuration for React applications:
 - All base configuration settings
 - JSX support with React 17+ transform
 - DOM and DOM.Iterable lib references
-- Optimized for bundlers (Vite, Webpack)
+- Vite-specific optimizations
 - React-specific type checking
 
-### Node.js Configuration (`node.json`)
+### React Library Configuration (`react.json`)
 
-Configuration for Node.js applications and APIs:
+Configuration for React component libraries:
+
+```json
+// tsconfig.json
+{
+  "extends": "@beach-box/tsconfig/react.json",
+  "compilerOptions": {
+    "outDir": "./dist",
+    "declarationDir": "./dist"
+  },
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "dist", "**/*.test.*", "**/*.stories.*"]
+}
+```
+
+**Features:**
+- All base configuration settings
+- JSX support for component libraries
+- Declaration file generation
+- Tree-shaking friendly settings
+- Storybook exclusions
+
+### Node Library Configuration (`node.json`)
+
+Configuration for Node.js libraries and utilities:
 
 ```json
 // tsconfig.json
@@ -91,79 +115,6 @@ Configuration for Node.js applications and APIs:
 - CommonJS and ESM module support
 - Node.js-specific lib references
 - Server-side optimizations
-
-### NestJS Configuration (`nestjs.json`)
-
-Specialized configuration for NestJS applications:
-
-```json
-// tsconfig.json
-{
-  "extends": "@beach-box/tsconfig/nestjs.json",
-  "compilerOptions": {
-    "outDir": "./dist"
-  },
-  "include": ["src/**/*"],
-  "exclude": ["node_modules", "dist"]
-}
-```
-
-**Features:**
-- All Node.js configuration settings
-- Decorator support enabled
-- Reflection metadata support
-- Class-based architecture optimizations
-- NestJS-specific compiler options
-
-### Library Configuration (`library.json`)
-
-Configuration for shared libraries and packages:
-
-```json
-// tsconfig.json
-{
-  "extends": "@beach-box/tsconfig/library.json",
-  "compilerOptions": {
-    "outDir": "./dist",
-    "declarationDir": "./dist"
-  },
-  "include": ["src/**/*"],
-  "exclude": ["node_modules", "dist", "**/*.test.*"]
-}
-```
-
-**Features:**
-- All base configuration settings
-- Declaration file generation
-- Multiple output formats support
-- Tree-shaking friendly settings
-- Library-specific optimizations
-
-### Next.js Configuration (`nextjs.json`)
-
-Specialized configuration for Next.js applications:
-
-```json
-// tsconfig.json
-{
-  "extends": "@beach-box/tsconfig/nextjs.json",
-  "compilerOptions": {
-    "baseUrl": ".",
-    "paths": {
-      "@/*": ["./src/*"]
-    }
-  },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],
-  "exclude": ["node_modules"]
-}
-```
-
-**Features:**
-- Next.js optimized settings
-- App Router support
-- Server Components support
-- Incremental compilation
-- Next.js-specific path mapping
 
 ## Configuration Details
 
@@ -198,84 +149,137 @@ Specialized configuration for Next.js applications:
     "declarationMap": true,
     "sourceMap": true,
     "removeComments": false,
-    "importHelpers": true,
 
     // Interop Constraints
     "isolatedModules": true,
-    "allowImportingTsExtensions": false,
-    "noEmit": false,
+    "allowImportingTsExtensions": true,
+    "noEmit": true,
 
     // Performance
     "skipLibCheck": true,
-    "incremental": true,
-    "tsBuildInfoFile": ".tsbuildinfo"
+    "incremental": true
   }
 }
 ```
 
-### Path Mapping
+### React Vite Specific Settings
 
-Monorepo path mapping for internal packages:
+Additional settings for React + Vite applications:
 
 ```json
 {
   "compilerOptions": {
+    // React JSX
+    "jsx": "react-jsx",
+    "jsxImportSource": "react",
+
+    // DOM Environment
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+
+    // Vite Specific
+    "types": ["vite/client"],
+    "allowImportingTsExtensions": true,
+    "noEmit": true,
+
+    // Path Mapping
     "baseUrl": ".",
     "paths": {
-      "@beach-box/unify-ui": ["../../packages/unify-ui/src"],
-      "@beach-box/unify-ui/*": ["../../packages/unify-ui/src/*"],
-      "@beach-box/core-api-client": ["../../packages/core-api-client/src"],
-      "@beach-box/core-api-types": ["../../packages/core-api-types/src"],
-      "@beach-box/schemas": ["../../shared/schemas/src"],
       "@/*": ["./src/*"]
     }
   }
 }
 ```
 
-## Usage Examples
+### React Library Specific Settings
 
-### React Application
+Additional settings for React component libraries:
 
 ```json
-// apps/broker-portal-ui/tsconfig.json
 {
-  "extends": "@beach-box/tsconfig/react.json",
+  "compilerOptions": {
+    // Library Build
+    "declaration": true,
+    "declarationMap": true,
+    "emitDeclarationOnly": false,
+
+    // JSX for Libraries
+    "jsx": "react-jsx",
+    "jsxImportSource": "react",
+
+    // Tree Shaking
+    "moduleResolution": "bundler",
+    "allowSyntheticDefaultImports": true,
+
+    // External Dependencies
+    "skipLibCheck": true
+  }
+}
+```
+
+## Usage Examples
+
+### Beach Box Landing Page
+
+```json
+// apps/beach-box-landing/tsconfig.json
+{
+  "extends": "@beach-box/tsconfig/react-vite.json",
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"],
-      "@/components/*": ["./src/components/*"],
-      "@/hooks/*": ["./src/hooks/*"]
+      "@beach-box/unify-ui": ["../packages/unify-ui/src"]
     }
   },
   "include": [
     "src/**/*",
-    "**/*.d.ts"
+    "vite.config.ts"
   ],
   "exclude": [
     "node_modules",
-    "dist",
-    "build"
+    "dist"
   ]
 }
 ```
 
-### Node.js API
+### Unify UI Component Library
 
 ```json
-// apps/EPM-CORE-API/tsconfig.json
+// packages/unify-ui/tsconfig.json
+{
+  "extends": "@beach-box/tsconfig/react.json",
+  "compilerOptions": {
+    "outDir": "./dist",
+    "declarationDir": "./dist/types",
+    "rootDir": "./src",
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"]
+    }
+  },
+  "include": [
+    "src/**/*"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "**/*.test.*",
+    "**/*.stories.*",
+    "storybook-static"
+  ]
+}
+```
+
+### Shared Schemas Package
+
+```json
+// shared/schemas/tsconfig.json
 {
   "extends": "@beach-box/tsconfig/node.json",
   "compilerOptions": {
     "outDir": "./dist",
-    "rootDir": "./src",
-    "baseUrl": ".",
-    "paths": {
-      "@/*": ["./src/*"],
-      "@/modules/*": ["./src/modules/*"],
-      "@/utils/*": ["./src/utils/*"]
-    }
+    "declarationDir": "./dist",
+    "rootDir": "./src"
   },
   "include": [
     "src/**/*"
@@ -288,257 +292,149 @@ Monorepo path mapping for internal packages:
 }
 ```
 
-### Shared Package
+### Shared ESLint Config Package
 
 ```json
-// packages/unify-ui/tsconfig.json
+// shared/eslint-config/tsconfig.json
 {
-  "extends": "@beach-box/tsconfig/library.json",
+  "extends": "@beach-box/tsconfig/node.json",
   "compilerOptions": {
     "outDir": "./dist",
     "declarationDir": "./dist",
-    "baseUrl": ".",
-    "paths": {
-      "@/*": ["./src/*"]
-    }
-  },
-  "include": [
-    "src/**/*"
-  ],
-  "exclude": [
-    "node_modules",
-    "dist",
-    "**/*.test.*",
-    "**/*.stories.*"
-  ]
-}
-```
-
-### NestJS Application
-
-```json
-// apps/enterprise-api/tsconfig.json
-{
-  "extends": "@beach-box/tsconfig/nestjs.json",
-  "compilerOptions": {
-    "outDir": "./dist",
-    "baseUrl": ".",
-    "paths": {
-      "@/*": ["./src/*"]
-    }
-  },
-  "include": [
-    "src/**/*"
-  ],
-  "exclude": [
-    "node_modules",
-    "dist",
-    "test/**/*"
-  ]
-}
-```
-
-## Build Configurations
-
-### Development Build
-
-```json
-// tsconfig.dev.json
-{
-  "extends": "./tsconfig.json",
-  "compilerOptions": {
-    "sourceMap": true,
-    "removeComments": false,
-    "noEmit": false,
-    "incremental": true
+    "rootDir": "./src"
   },
   "include": [
     "src/**/*",
-    "**/*.d.ts"
-  ]
-}
-```
-
-### Production Build
-
-```json
-// tsconfig.build.json
-{
-  "extends": "./tsconfig.json",
-  "compilerOptions": {
-    "sourceMap": false,
-    "removeComments": true,
-    "declaration": false,
-    "incremental": false
-  },
+    "*.js"
+  ],
   "exclude": [
     "node_modules",
-    "**/*.test.*",
-    "**/*.spec.*",
-    "**/*.stories.*"
+    "dist"
   ]
 }
 ```
 
-### Testing Configuration
+## Path Mapping
+
+### Monorepo Package References
+
+Configure path mapping to reference other packages in the monorepo:
 
 ```json
-// tsconfig.test.json
 {
-  "extends": "./tsconfig.json",
   "compilerOptions": {
-    "noEmit": true,
-    "types": ["jest", "node"]
+    "baseUrl": ".",
+    "paths": {
+      "@beach-box/unify-ui": ["../packages/unify-ui/src"],
+      "@beach-box/schemas": ["../shared/schemas/src"],
+      "@beach-box/eslint-config": ["../shared/eslint-config/src"]
+    }
+  }
+}
+```
+
+### Internal Path Mapping
+
+Set up convenient internal path aliases:
+
+```json
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"],
+      "@/components/*": ["./src/components/*"],
+      "@/utils/*": ["./src/lib/utils/*"],
+      "@/hooks/*": ["./src/hooks/*"],
+      "@/types/*": ["./src/types/*"]
+    }
+  }
+}
+```
+
+## Performance Optimization
+
+### Build Performance
+
+Optimize TypeScript compilation for faster builds:
+
+```json
+{
+  "compilerOptions": {
+    // Skip type checking for node_modules
+    "skipLibCheck": true,
+
+    // Enable incremental compilation
+    "incremental": true,
+    "tsBuildInfoFile": ".tsbuildinfo",
+
+    // Optimize module resolution
+    "moduleResolution": "bundler",
+
+    // Reduce memory usage
+    "preserveWatchOutput": true
   },
-  "include": [
-    "src/**/*",
+
+  // Exclude unnecessary files
+  "exclude": [
+    "node_modules",
+    "dist",
+    "build",
     "**/*.test.*",
     "**/*.spec.*"
   ]
 }
 ```
 
-## Type Definitions
+### Development Performance
 
-### Global Type Definitions
-
-```typescript
-// types/global.d.ts
-declare global {
-  namespace NodeJS {
-    interface ProcessEnv {
-      NODE_ENV: 'development' | 'production' | 'test';
-      API_URL: string;
-      DATABASE_URL: string;
-    }
-  }
-}
-
-export {};
-```
-
-### Module Augmentations
-
-```typescript
-// types/modules.d.ts
-declare module '*.svg' {
-  const content: string;
-  export default content;
-}
-
-declare module '*.css' {
-  const content: Record<string, string>;
-  export default content;
-}
-
-declare module '*.json' {
-  const value: any;
-  export default value;
-}
-```
-
-## Compiler Options Explained
-
-### Type Checking Options
-
-```json
-{
-  "strict": true,                           // Enable all strict checks
-  "noImplicitAny": true,                   // Error on implicit 'any' types
-  "strictNullChecks": true,                // Strict null/undefined checking
-  "strictFunctionTypes": true,             // Strict function type checking
-  "noImplicitReturns": true,               // Error on missing return statements
-  "noFallthroughCasesInSwitch": true,      // Error on fallthrough cases
-  "noUncheckedIndexedAccess": true,        // Check array/object access
-  "exactOptionalPropertyTypes": true        // Exact optional property types
-}
-```
-
-### Module Resolution Options
-
-```json
-{
-  "moduleResolution": "bundler",            // Modern bundler resolution
-  "esModuleInterop": true,                  // CommonJS/ES modules interop
-  "allowSyntheticDefaultImports": true,     // Allow default imports
-  "resolveJsonModule": true,                // Import JSON files
-  "allowImportingTsExtensions": false       // Disallow .ts extensions in imports
-}
-```
-
-### Emit Options
-
-```json
-{
-  "declaration": true,                      // Generate .d.ts files
-  "declarationMap": true,                   // Generate .d.ts.map files
-  "sourceMap": true,                        // Generate source maps
-  "outDir": "./dist",                       // Output directory
-  "removeComments": false,                  // Keep comments in output
-  "importHelpers": true                     // Use tslib helpers
-}
-```
-
-## Performance Optimization
-
-### Incremental Compilation
+Settings for optimal development experience:
 
 ```json
 {
   "compilerOptions": {
-    "incremental": true,
-    "tsBuildInfoFile": ".tsbuildinfo",
-    "composite": true
+    // Fast refresh for development
+    "isolatedModules": true,
+
+    // No emit during development (handled by Vite)
+    "noEmit": true,
+
+    // Preserve imports for better tree shaking
+    "preserveValueImports": true,
+
+    // Modern module resolution
+    "moduleResolution": "bundler"
   }
 }
 ```
 
-### Project References
+## Project References
+
+For large monorepos, use TypeScript project references:
 
 ```json
+// Root tsconfig.json
 {
+  "files": [],
   "references": [
+    { "path": "./apps/beach-box-landing" },
     { "path": "./packages/unify-ui" },
-    { "path": "./packages/core-api-types" },
-    { "path": "./shared/schemas" }
+    { "path": "./shared/schemas" },
+    { "path": "./shared/eslint-config" }
   ]
 }
 ```
 
-### Skip Lib Check
+Each referenced project should have:
 
 ```json
 {
+  "extends": "@beach-box/tsconfig/react-vite.json",
   "compilerOptions": {
-    "skipLibCheck": true,  // Skip type checking of declaration files
-    "skipDefaultLibCheck": true
+    "composite": true,
+    "declaration": true,
+    "declarationMap": true
   }
-}
-```
-
-## IDE Integration
-
-### VS Code Settings
-
-```json
-// .vscode/settings.json
-{
-  "typescript.preferences.includePackageJsonAutoImports": "on",
-  "typescript.suggest.autoImports": true,
-  "typescript.updateImportsOnFileMove.enabled": "always",
-  "typescript.inlayHints.parameterNames.enabled": "all",
-  "typescript.inlayHints.variableTypes.enabled": true,
-  "typescript.inlayHints.functionLikeReturnTypes.enabled": true
-}
-```
-
-### Path Mapping in VS Code
-
-```json
-// .vscode/settings.json
-{
-  "typescript.preferences.useAliasesForRenames": false,
-  "typescript.suggest.includeAutomaticOptionalChainCompletions": true
 }
 ```
 
@@ -546,138 +442,30 @@ declare module '*.json' {
 
 ### Common Issues
 
-#### Module Resolution Issues
+1. **Module Resolution Errors**
+   - Ensure `moduleResolution` is set to `"bundler"` for modern bundlers
+   - Check path mappings in `paths` configuration
 
-```json
-// Fix: Update module resolution
-{
-  "compilerOptions": {
-    "moduleResolution": "bundler",
-    "allowImportingTsExtensions": false
-  }
-}
-```
+2. **JSX Errors**
+   - Verify `jsx` is set to `"react-jsx"` for React 17+
+   - Check `jsxImportSource` is set correctly
 
-#### Path Mapping Not Working
+3. **Build Performance**
+   - Enable `skipLibCheck` to skip type checking of declaration files
+   - Use `incremental` compilation for faster rebuilds
 
-```json
-// Fix: Ensure baseUrl is set
-{
-  "compilerOptions": {
-    "baseUrl": ".",
-    "paths": {
-      "@/*": ["./src/*"]
-    }
-  }
-}
-```
+4. **Monorepo Issues**
+   - Set up proper project references
+   - Configure path mappings for internal packages
 
-#### Build Performance Issues
+### Best Practices
 
-```json
-// Fix: Enable incremental builds
-{
-  "compilerOptions": {
-    "incremental": true,
-    "skipLibCheck": true
-  }
-}
-```
+1. **Extend Base Configs**: Always extend from base configurations
+2. **Minimal Overrides**: Only override settings when necessary
+3. **Consistent Settings**: Use the same configuration for similar project types
+4. **Path Mappings**: Use path mappings for cleaner imports
+5. **Exclude Patterns**: Properly exclude build artifacts and test files
 
-### Memory Issues
+---
 
-```bash
-# Increase Node.js memory limit
-export NODE_OPTIONS="--max-old-space-size=8192"
-
-# Or use in package.json scripts
-"build": "node --max-old-space-size=8192 ./node_modules/typescript/bin/tsc"
-```
-
-## Migration Guide
-
-### From JavaScript to TypeScript
-
-1. **Install TypeScript**:
-   ```bash
-   pnpm add -D typescript @beach-box/tsconfig
-   ```
-
-2. **Create tsconfig.json**:
-   ```json
-   {
-     "extends": "@beach-box/tsconfig/react.json"
-   }
-   ```
-
-3. **Rename files**: `.js` → `.ts`, `.jsx` → `.tsx`
-
-4. **Add type annotations**: Start with `any`, gradually add specific types
-
-5. **Fix type errors**: Address TypeScript compiler errors
-
-### From Other Configs
-
-1. **Compare settings**: Review differences between configs
-2. **Update extends**: Change to use `@beach-box/tsconfig`
-3. **Merge custom settings**: Add project-specific overrides
-4. **Test build**: Ensure compilation works correctly
-
-## Scripts
-
-Common package.json scripts:
-
-```json
-{
-  "scripts": {
-    "type-check": "tsc --noEmit",
-    "type-check:watch": "tsc --noEmit --watch",
-    "build": "tsc",
-    "build:watch": "tsc --watch",
-    "clean": "rm -rf dist .tsbuildinfo"
-  }
-}
-```
-
-## Best Practices
-
-### File Organization
-
-```
-src/
-├── types/          # Type definitions
-├── utils/          # Utility functions
-├── components/     # React components
-├── hooks/          # Custom hooks
-├── services/       # API services
-├── constants/      # App constants
-└── index.ts        # Main entry point
-```
-
-### Type Definition Guidelines
-
-- Use interfaces for objects that might be extended
-- Use types for unions, primitives, and computed types
-- Prefer readonly for immutable data
-- Use const assertions for literal types
-- Document complex types with JSDoc comments
-
-### Import Organization
-
-```typescript
-// 1. Node modules
-import React from 'react';
-import axios from 'axios';
-
-// 2. Internal packages
-import { Button } from '@beach-box/unify-ui';
-import { UserSchema } from '@beach-box/schemas';
-
-// 3. Relative imports
-import { useAuth } from '../hooks/useAuth';
-import { formatDate } from './utils';
-```
-
-## License
-
-Private - Part of beach Box Monorepo
+**Part of the Beach Box Monorepo** 🏖️

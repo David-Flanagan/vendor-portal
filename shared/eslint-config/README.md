@@ -1,17 +1,17 @@
 # @beach-box/eslint-config
 
-Shared ESLint configuration for the beach Box monorepo, providing consistent code quality standards and best practices across all applications and packages.
+Shared ESLint configuration for the Beach Box monorepo, providing consistent code quality standards and best practices across all applications and packages.
 
 ## Overview
 
-This package contains standardized ESLint configurations for different project types within the beach Box monorepo. It enforces consistent code style, catches common errors, and promotes best practices across TypeScript, React, and Node.js applications.
+This package contains standardized ESLint configurations for different project types within the Beach Box monorepo. It enforces consistent code style, catches common errors, and promotes best practices across TypeScript, React, and Vite applications.
 
 ## Features
 
 - **Multiple Configurations**: Tailored configs for different project types
 - **TypeScript Support**: Full TypeScript integration with type-aware rules
 - **React Integration**: React-specific rules and best practices
-- **NestJS Support**: Specialized configuration for NestJS applications
+- **Vite Support**: Optimized configuration for Vite applications
 - **Import Organization**: Automatic import sorting and organization
 - **Code Quality**: Rules for code consistency and error prevention
 - **Performance**: Optimized rule sets for fast linting
@@ -43,14 +43,14 @@ module.exports = {
 - Security-focused rules
 - Performance optimizations
 
-### React Configuration (`react.js`)
+### React Configuration (`react-vite.js`)
 
-Specialized configuration for React applications:
+Specialized configuration for React + Vite applications:
 
 ```javascript
 // .eslintrc.js
 module.exports = {
-  extends: ['@beach-box/eslint-config/react'],
+  extends: ['@beach-box/eslint-config/react-vite'],
 };
 ```
 
@@ -60,16 +60,35 @@ module.exports = {
 - React Hooks rules
 - JSX accessibility rules
 - React performance rules
+- Vite-specific optimizations
 - Tailwind CSS class sorting
 
-### Node.js Configuration (`node.js`)
+### React Library Configuration (`react-lib.js`)
 
-Configuration for Node.js applications and APIs:
+Configuration for React component libraries:
 
 ```javascript
 // .eslintrc.js
 module.exports = {
-  extends: ['@beach-box/eslint-config/node'],
+  extends: ['@beach-box/eslint-config/react-lib'],
+};
+```
+
+**Includes:**
+- All base configuration rules
+- React library best practices
+- Component export patterns
+- TypeScript strict mode
+- Tree-shaking friendly patterns
+
+### Node Library Configuration (`node-lib.js`)
+
+Configuration for Node.js libraries and utilities:
+
+```javascript
+// .eslintrc.js
+module.exports = {
+  extends: ['@beach-box/eslint-config/node-lib'],
 };
 ```
 
@@ -77,98 +96,54 @@ module.exports = {
 - All base configuration rules
 - Node.js environment settings
 - CommonJS and ES modules support
-- Node.js security rules
-- Server-side specific rules
-
-### NestJS Configuration (`nestjs.js`)
-
-Specialized configuration for NestJS applications:
-
-```javascript
-// .eslintrc.js
-module.exports = {
-  extends: ['@beach-box/eslint-config/nestjs'],
-};
-```
-
-**Includes:**
-- All Node.js configuration rules
-- NestJS decorators support
-- Dependency injection patterns
-- Class-based architecture rules
-- API endpoint conventions
-
-### Library Configuration (`library.js`)
-
-Configuration for shared libraries and packages:
-
-```javascript
-// .eslintrc.js
-module.exports = {
-  extends: ['@beach-box/eslint-config/library'],
-};
-```
-
-**Includes:**
-- All base configuration rules
 - Library-specific patterns
 - Export conventions
-- Documentation requirements
-- Tree-shaking friendly patterns
 
 ## Usage Examples
 
-### React Application
+### Beach Box Landing Page
 
 ```javascript
-// apps/broker-portal-ui/.eslintrc.js
+// apps/beach-box-landing/.eslintrc.js
 module.exports = {
-  extends: ['@beach-box/eslint-config/react'],
+  extends: ['@beach-box/eslint-config/react-vite'],
   parserOptions: {
     project: './tsconfig.json',
   },
   rules: {
-    // Project-specific overrides
+    // Project-specific overrides for Beach Box
     '@typescript-eslint/prefer-nullish-coalescing': 'off',
   },
 };
 ```
 
-### Node.js API
+### Unify UI Component Library
 
 ```javascript
-// apps/EPM-CORE-API/.eslintrc.js
+// packages/unify-ui/.eslintrc.js
 module.exports = {
-  extends: ['@beach-box/eslint-config/node'],
+  extends: ['@beach-box/eslint-config/react-lib'],
+  parserOptions: {
+    project: './tsconfig.json',
+  },
+  rules: {
+    // Component library specific rules
+    'react/prop-types': 'off', // Using TypeScript for props
+  },
+};
+```
+
+### Shared Schemas Package
+
+```javascript
+// shared/schemas/.eslintrc.js
+module.exports = {
+  extends: ['@beach-box/eslint-config/node-lib'],
   parserOptions: {
     project: './tsconfig.json',
   },
   env: {
     node: true,
-  },
-};
-```
-
-### NestJS Application
-
-```javascript
-// apps/enterprise-api/.eslintrc.js
-module.exports = {
-  extends: ['@beach-box/eslint-config/nestjs'],
-  parserOptions: {
-    project: './tsconfig.json',
-  },
-};
-```
-
-### Shared Package
-
-```javascript
-// packages/unify-ui/.eslintrc.js
-module.exports = {
-  extends: ['@beach-box/eslint-config/library'],
-  parserOptions: {
-    project: './tsconfig.json',
   },
 };
 ```
