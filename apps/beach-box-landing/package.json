@@ -1,0 +1,38 @@
+{
+	"name": "beach-box-landing",
+	"version": "0.0.0",
+	"private": true,
+	"type": "module",
+	"scripts": {
+		"build": "tsc && vite build",
+		"dev": "vite",
+		"preview": "vite preview",
+		"type-check": "tsc --noEmit"
+	},
+	"dependencies": {
+		"@beach-box/unify-ui": "workspace:*",
+		"@tanstack/react-router": "^1.45.0",
+		"@tanstack/router-vite-plugin": "^1.45.0",
+		"clsx": "^2.1.1",
+		"lucide-react": "^0.292.0",
+		"react": "^18.3.1",
+		"react-dom": "^18.3.1",
+		"tailwind-merge": "^2.6.0"
+	},
+	"devDependencies": {
+		"@beach-box/eslint-config": "workspace:*",
+		"@beach-box/tsconfig": "workspace:*",
+		"@tanstack/router-cli": "^1.45.0",
+		"@types/react": "^18.2.37",
+		"@types/react-dom": "^18.2.15",
+		"@vitejs/plugin-react-swc": "^3.5.0",
+		"autoprefixer": "^10.4.16",
+		"postcss": "^8.4.31",
+		"tailwindcss": "^3.3.5",
+		"typescript": "^5.2.2",
+		"vite": "^5.0.0"
+	},
+	"engines": {
+		"node": ">=20.0.0"
+	}
+}

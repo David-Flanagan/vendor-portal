@@ -1,0 +1,21 @@
+# Dependencies
+node_modules/
+.pnp
+.pnp.js
+
+# Production
+dist/
+build/
+
+# Turbo
+.turbo
+
+# Changesets
+.changeset
+
+# Coverage
+coverage/
+
+# Misc
+*.md
+pnpm-lock.yaml

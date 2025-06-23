@@ -1,0 +1,37 @@
+{
+  "dependencies": {
+    "@typescript-eslint/eslint-plugin": "^6.10.0",
+    "@typescript-eslint/parser": "^6.10.0",
+    "eslint-config-prettier": "^9.0.0",
+    "eslint-plugin-jsx-a11y": "^6.8.0",
+    "eslint-plugin-react": "^7.33.2",
+    "eslint-plugin-react-hooks": "^4.6.0",
+    "eslint-plugin-react-refresh": "^0.4.5",
+    "eslint-plugin-storybook": "^0.6.15"
+  },
+  "exports": {
+    ".": "./index.js",
+    "./base": "./base.js",
+    "./node-lib": "./node-lib.js",
+    "./nestjs": "./nestjs.js",
+    "./react-lib": "./react-lib.js",
+    "./react-vite": "./react-vite.js",
+    "./react-nextjs": "./react-nextjs.js"
+  },
+  "files": [
+    "index.js",
+    "base.js",
+    "node-lib.js",
+    "nestjs.js",
+    "react-vite.js",
+    "react-lib.js",
+    "react-nextjs.js"
+  ],
+  "main": "index.js",
+  "name": "@beach-box/eslint-config",
+  "private": true,
+  "version": "0.0.0",
+  "engines": {
+    "node": ">=20.0.0"
+  }
+}

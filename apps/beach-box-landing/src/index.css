@@ -1,0 +1,111 @@
+@import "@beach-box/unify-ui/styles/globals.css";
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Beach Box Florida specific styles */
+@layer base {
+  :root {
+    /* Beach Box brand colors */
+    --beach-50: 54 97% 95%;
+    --beach-100: 53 94% 91%;
+    --beach-200: 51 91% 81%;
+    --beach-300: 49 89% 72%;
+    --beach-400: 47 87% 62%;
+    --beach-500: 45 86% 51%;
+    --beach-600: 44 83% 41%;
+    --beach-700: 43 82% 31%;
+    --beach-800: 41 81% 21%;
+    --beach-900: 39 82% 10%;
+
+    --ocean-50: 210 100% 95%;
+    --ocean-100: 210 100% 90%;
+    --ocean-200: 210 100% 80%;
+    --ocean-300: 210 100% 70%;
+    --ocean-400: 210 100% 60%;
+    --ocean-500: 210 100% 50%;
+    --ocean-600: 210 100% 40%;
+    --ocean-700: 210 100% 30%;
+    --ocean-800: 210 100% 20%;
+    --ocean-900: 210 100% 10%;
+  }
+}
+
+/* Custom animations for Beach Box */
+@keyframes wave {
+  0%, 100% {
+    transform: translateY(0) rotate(0deg);
+  }
+  25% {
+    transform: translateY(-10px) rotate(-5deg);
+  }
+  75% {
+    transform: translateY(5px) rotate(5deg);
+  }
+}
+
+@keyframes sun-pulse {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.1);
+    opacity: 0.8;
+  }
+}
+
+/* Beach Box utility classes */
+.animate-wave {
+  animation: wave 3s ease-in-out infinite;
+}
+
+.animate-sun-pulse {
+  animation: sun-pulse 2s ease-in-out infinite;
+}
+
+/* Beach gradient effects */
+.beach-gradient {
+  background: linear-gradient(135deg, hsl(var(--beach-400)) 0%, hsl(var(--ocean-500)) 100%);
+}
+
+.beach-gradient-text {
+  background: linear-gradient(135deg, hsl(var(--beach-500)) 0%, hsl(var(--ocean-600)) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Beach Box specific component styles */
+.beach-box-hero {
+  background: linear-gradient(180deg, hsl(var(--ocean-50)) 0%, hsl(var(--beach-50)) 100%);
+}
+
+/* Sand texture effect */
+.sand-texture {
+  position: relative;
+  overflow: hidden;
+}
+
+.sand-texture::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.03'/%3E%3C/svg%3E");
+  pointer-events: none;
+}
+
+/* Smooth scrolling */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Custom focus styles for accessibility */
+.focus-beach {
+  @apply focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-background;
+  --tw-ring-color: hsl(var(--beach-500));
+}

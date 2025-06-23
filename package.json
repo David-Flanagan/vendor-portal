@@ -1,0 +1,32 @@
+{
+	"name": "beach-box-monorepo",
+	"version": "0.0.0",
+	"private": true,
+	"scripts": {
+		"build": "turbo run build",
+		"changeset": "changeset",
+		"dev": "turbo run dev",
+		"format": "prettier --write \"**/*.{ts,tsx,md,json}\"",
+		"lint": "turbo run lint",
+		"release": "turbo run build --filter=./packages/* && changeset publish",
+		"test": "turbo run test",
+		"version-packages": "changeset version"
+	},
+	"dependencies": {
+		"@tanstack/react-query": "^5.0.0",
+		"@tanstack/react-virtual": "^3.13.10",
+		"react-albus": "^2.0.0"
+	},
+	"devDependencies": {
+		"@changesets/cli": "^2.26.2",
+		"@beach-box/eslint-config": "workspace:*",
+		"eslint": "^8.53.0",
+		"prettier": "^3.0.3",
+		"turbo": "latest",
+		"typescript": "^5.2.2"
+	},
+	"packageManager": "pnpm@8.10.0",
+	"engines": {
+		"node": ">=20.0.0"
+	}
+}

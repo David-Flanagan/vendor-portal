@@ -1,0 +1,15 @@
+{
+  "name": "@beach-box/tsconfig",
+  "version": "0.0.0",
+  "private": true,
+  "files": [
+    "base.json",
+    "node.json",
+    "nestjs.json",
+    "react.json",
+    "react-vite.json"
+  ],
+  "engines": {
+    "node": ">=20.0.0"
+  }
+}
