@@ -2,21 +2,24 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { EnhancedLoginForm } from '@/components/auth';
+import { OnboardingWizard } from '@/components/auth';
 import { useAuth } from '@/lib/auth';
 
-export default function SignInPage() {
+export default function OnboardingPage() {
   const [isLoading, setIsLoading] = useState(true);
   const router = useRouter();
-  const { user } = useAuth();
+  const { user, currentCompany } = useAuth();
 
   useEffect(() => {
-    if (user) {
+    if (!user) {
+      router.push('/signin');
+    } else if (currentCompany) {
+      // User already has a company, redirect to dashboard
       router.push('/dashboard');
     } else {
       setIsLoading(false);
     }
-  }, [user, router]);
+  }, [user, currentCompany, router]);
 
   if (isLoading) {
     return (
@@ -27,8 +30,8 @@ export default function SignInPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50">
-      <EnhancedLoginForm className="w-full max-w-md" />
+    <div className="min-h-screen bg-gray-50">
+      <OnboardingWizard />
     </div>
   );
 }

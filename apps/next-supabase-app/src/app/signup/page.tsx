@@ -1,80 +1,34 @@
-'use client'
+'use client';
 
-import { redirect } from 'next/navigation'
-import { Auth } from '@supabase/auth-ui-react'
-import { ThemeSupa } from '@supabase/auth-ui-shared'
-import { useEffect, useState } from 'react'
-import { supabase } from '@/lib/supabase'
+import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { EnhancedRegisterForm } from '@/components/auth';
+import { useAuth } from '@/lib/auth';
 
 export default function SignUpPage() {
-	const [isLoading, setIsLoading] = useState(true)
-	const [isAuthenticated, setIsAuthenticated] = useState(false)
+  const [isLoading, setIsLoading] = useState(true);
+  const router = useRouter();
+  const { user } = useAuth();
 
-	useEffect(() => {
-		// Check if user is already authenticated
-		const checkSession = async () => {
-			const {
-				data: { session },
-			} = await supabase.auth.getSession()
-			if (session) {
-				setIsAuthenticated(true)
-			}
-			setIsLoading(false)
-		}
+  useEffect(() => {
+    if (user) {
+      router.push('/dashboard');
+    } else {
+      setIsLoading(false);
+    }
+  }, [user, router]);
 
-		checkSession()
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+      </div>
+    );
+  }
 
-		const {
-			data: { subscription },
-		} = supabase.auth.onAuthStateChange((event, session) => {
-			if (session) {
-				window.location.href = '/dashboard'
-			}
-		})
-
-		return () => {
-			subscription.unsubscribe()
-		}
-	}, [])
-
-	if (isAuthenticated && !isLoading) {
-		window.location.href = '/dashboard'
-		return null
-	}
-
-	if (isLoading) {
-		return (
-			<div className="mx-auto max-w-md py-12">
-				<div className="bg-white shadow rounded-lg p-6 sm:p-8 flex justify-center items-center min-h-[50vh]">
-					<p>Loading...</p>
-				</div>
-			</div>
-		)
-	}
-
-	return (
-		<div className="mx-auto max-w-md py-12">
-			<div className="bg-white shadow rounded-lg p-6 sm:p-8">
-				<div className="mb-6 text-center">
-					<h1 className="text-2xl font-bold">Create an Account</h1>
-					<p className="text-sm text-gray-600 mt-2">
-						Sign up for your Atlas Payments account
-					</p>
-				</div>
-
-				<div className="flex justify-center">
-					<div className="w-full">
-						<Auth
-							supabaseClient={supabase}
-							appearance={{ theme: ThemeSupa }}
-							theme="light"
-							providers={['google', 'github']}
-							redirectTo={`${window.location.origin}/dashboard`}
-							view="sign_up"
-						/>
-					</div>
-				</div>
-			</div>
-		</div>
-	)
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-gray-50">
+      <EnhancedRegisterForm className="w-full max-w-md" />
+    </div>
+  );
 }

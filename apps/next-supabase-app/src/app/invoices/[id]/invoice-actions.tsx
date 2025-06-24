@@ -1,13 +1,13 @@
 'use client';
 
 import { Tables } from '@/types/supabase';
-import Button from '@/components/ui/button';
+import { Button } from '@/components/ui/button';
 import { useUpdateInvoiceStatus } from '@/lib/hooks/useInvoices';
 
 interface InvoiceActionsProps {
-  invoice: Tables['invoices'] & {
-    items: Tables['invoice_items'][];
-    payments?: Tables['payments'][];
+  invoice: Tables<'invoices'> & {
+    items: Tables<'invoice_items'>[];
+    payments?: Tables<'payments'>[];
   };
 }
 

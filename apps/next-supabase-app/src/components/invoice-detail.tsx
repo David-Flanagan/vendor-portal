@@ -1,13 +1,13 @@
 import { Tables } from '@/types/supabase';
 import { formatMoney, formatDate } from '@/lib/utils';
 import InvoiceStatusBadge from './invoice-status-badge';
-import Button from './ui/button';
+import { Button } from './ui/button';
 import Link from 'next/link';
 
 interface InvoiceDetailProps {
-  invoice: Tables['invoices'] & {
-    items: Tables['invoice_items'][];
-    payments?: Tables['payments'][];
+  invoice: Tables<'invoices'> & {
+    items: Tables<'invoice_items'>[];
+    payments?: Tables<'payments'>[];
   };
   onSendInvoice?: (invoiceId: string) => void;
   isSending?: boolean;
@@ -174,9 +174,9 @@ export default function InvoiceDetail({
         {canSend && onSendInvoice && (
           <Button
             onClick={() => onSendInvoice(invoice.id)}
-            isLoading={isSending}
+            disabled={isSending}
           >
-            Send Invoice
+            {isSending ? 'Sending...' : 'Send Invoice'}
           </Button>
         )}
         {canPay && (

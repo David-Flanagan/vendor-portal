@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { formatMoney, formatDate } from '@/lib/utils';
 import InvoiceStatusBadge from '@/components/invoice-status-badge';
-import Button from '@/components/ui/button';
+import { Button } from '@/components/ui/button';
 import { supabase } from '@/lib/supabase';
 import { User } from '@supabase/supabase-js';
 import { Tables } from '@/types/supabase';
@@ -82,10 +82,10 @@ function DashboardContent() {
               total_sent: invoices.filter(inv => inv.status === 'sent').length,
               total_paid: invoices.filter(inv => inv.status === 'paid').length,
               total_overdue: invoices.filter(inv => inv.status === 'overdue').length,
-              total_amount_cents: invoices.reduce((sum, inv) => sum + (inv.amount_cents || 0), 0),
+              total_amount_cents: invoices.reduce((sum, inv) => sum + (inv.total_cents || 0), 0),
               total_paid_amount_cents: invoices
                 .filter(inv => inv.status === 'paid')
-                .reduce((sum, inv) => sum + (inv.amount_cents || 0), 0),
+                .reduce((sum, inv) => sum + (inv.total_cents || 0), 0),
             };
             setStats(stats);
 
@@ -204,10 +204,10 @@ function DashboardContent() {
                         <span className="font-medium">#{invoice.id.slice(0, 8)}</span>
                       </td>
                       <td className="py-3">
-                        <span>{invoice.customer_name}</span>
+                        <span>{invoice.metadata?.customer_email || 'N/A'}</span>
                       </td>
                       <td className="py-3">
-                        <span className="font-medium">{formatMoney(invoice.amount_cents || 0)}</span>
+                        <span className="font-medium">{formatMoney(invoice.total_cents || 0)}</span>
                       </td>
                       <td className="py-3">
                         <InvoiceStatusBadge status={invoice.status} />

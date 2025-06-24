@@ -5,7 +5,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { formatMoney, formatDate } from '@/lib/utils';
 import InvoiceStatusBadge from '@/components/invoice-status-badge';
-import Button from '@/components/ui/button';
+import { Button } from '@/components/ui/button';
 import NewInvoiceButton from '@/components/new-invoice-button';
 import { useInvoices } from '@/lib/hooks/useInvoices';
 import { useOrganization } from '@/lib/hooks/useOrganization';

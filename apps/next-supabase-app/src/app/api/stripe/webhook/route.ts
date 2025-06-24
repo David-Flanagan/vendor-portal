@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { verifyStripeWebhookSignature } from '@/lib/stripe';
-import { createServerSupabaseClient } from '@/lib/supabase-server';
+import { createServiceClient } from '@/lib/supabase-server';
 
 export const config = {
   runtime: 'edge',
@@ -39,7 +39,7 @@ export async function POST(request: NextRequest) {
           );
         }
 
-        const supabase = createServerSupabaseClient();
+        const supabase = createServiceClient();
 
         // Create a payment record
         const { error: paymentError } = await supabase
@@ -77,7 +77,7 @@ export async function POST(request: NextRequest) {
           );
         }
 
-        const supabase = createServerSupabaseClient();
+        const supabase = createServiceClient();
 
         // Create a failed payment record
         const { error: paymentError } = await supabase

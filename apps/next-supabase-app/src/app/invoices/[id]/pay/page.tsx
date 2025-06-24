@@ -3,14 +3,14 @@
 import { useState, useEffect } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import Link from 'next/link';
-import Button from '@/components/ui/button';
+import { Button } from '@/components/ui/button';
 import PaymentForm from '@/components/payment-form';
 import PaymentProcessor from './payment-processor';
 import { supabase } from '@/lib/supabase';
 import { Tables } from '@/types/supabase';
 
-type InvoiceWithItems = Tables['invoices'] & {
-  items: Tables['invoice_items'][];
+type InvoiceWithItems = Tables<'invoices'> & {
+  items: Tables<'invoice_items'>[];
 };
 
 export default function InvoicePaymentPage() {

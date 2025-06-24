@@ -7,8 +7,8 @@ import PaymentForm from '@/components/payment-form';
 import toast from 'react-hot-toast';
 
 interface PaymentProcessorProps {
-  invoice: Tables['invoices'] & {
-    items: Tables['invoice_items'][];
+  invoice: Tables<'invoices'> & {
+    items: Tables<'invoice_items'>[];
   };
 }
 

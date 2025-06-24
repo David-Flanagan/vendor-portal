@@ -3,7 +3,7 @@
 import { useEffect } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import Link from 'next/link';
-import Button from '@/components/ui/button';
+import { Button } from '@/components/ui/button';
 import InvoiceDetail from '@/components/invoice-detail';
 import InvoiceActions from './invoice-actions';
 import { useInvoice } from '@/lib/hooks/useInvoices';

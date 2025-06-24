@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useForm, useFieldArray } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
-import Button from './ui/button';
+import { Button } from './ui/button';
 import Input from './ui/input';
 import { calculateInvoiceTotal } from '@/lib/utils';
 

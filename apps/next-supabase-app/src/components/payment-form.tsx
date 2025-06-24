@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
-import Button from './ui/button';
+import { Button } from './ui/button';
 import { formatMoney } from '@/lib/utils';
 import { Tables } from '@/types/supabase';
 
 interface PaymentFormProps {
-  invoice: Tables['invoices'] & {
-    items: Tables['invoice_items'][];
+  invoice: Tables<'invoices'> & {
+    items: Tables<'invoice_items'>[];
   };
   onPaymentSubmit: (paymentData: { cardNumber: string; cardName: string; }) => Promise<void>;
 }

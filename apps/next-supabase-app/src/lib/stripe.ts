@@ -2,10 +2,10 @@ import Stripe from 'stripe';
 import { Tables } from '@/types/supabase';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: '2025-04-30.basil',
+  apiVersion: '2025-05-28.basil',
 });
 
-export async function createPaymentIntent(invoice: Tables['invoices']) {
+export async function createPaymentIntent(invoice: Tables<'invoices'>) {
   try {
     const paymentIntent = await stripe.paymentIntents.create({
       amount: invoice.amount_cents,
