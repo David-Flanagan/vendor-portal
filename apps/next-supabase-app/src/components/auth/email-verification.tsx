@@ -2,9 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { Button } from '../ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui/card';
-import { Alert, AlertDescription } from '../ui/alert';
+import { Button, Card, CardContent, CardDescription, CardHeader, CardTitle, Alert, AlertDescription } from '@beach-box/unify-ui';
 import { supabase } from '@/lib/supabase';
 import { Mail, CheckCircle, AlertCircle, RefreshCcw } from 'lucide-react';
 

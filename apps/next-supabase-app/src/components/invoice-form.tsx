@@ -2,8 +2,7 @@ import { useState } from 'react';
 import { useForm, useFieldArray } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Button } from './ui/button';
-import Input from './ui/input';
+import { Button, Input } from '@beach-box/unify-ui';
 import { calculateInvoiceTotal } from '@/lib/utils';
 
 const invoiceItemSchema = z.object({

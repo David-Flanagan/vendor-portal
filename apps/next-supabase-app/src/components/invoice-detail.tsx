@@ -1,7 +1,7 @@
 import { Tables } from '@/types/supabase';
 import { formatMoney, formatDate } from '@/lib/utils';
 import InvoiceStatusBadge from './invoice-status-badge';
-import { Button } from './ui/button';
+import { Button } from '@beach-box/unify-ui';
 import Link from 'next/link';
 
 interface InvoiceDetailProps {

@@ -1,251 +1,219 @@
 'use client';
 
-import { Suspense, useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
-import Link from 'next/link';
-import { formatMoney, formatDate } from '@/lib/utils';
-import InvoiceStatusBadge from '@/components/invoice-status-badge';
-import { Button } from '@/components/ui/button';
-import { supabase } from '@/lib/supabase';
-import { User } from '@supabase/supabase-js';
-import { Tables } from '@/types/supabase';
-
-interface OrgMembership {
-  id: string;
-  org_id: string;
-  user_id: string;
-  role: string;
-}
-
-interface Organization {
-  id: string;
-  name: string;
-}
-
-interface Stats {
-  total_invoices: number;
-  total_draft: number;
-  total_sent: number;
-  total_paid: number;
-  total_overdue: number;
-  total_amount_cents: number;
-  total_paid_amount_cents: number;
-}
+import React, { Suspense } from 'react';
+import {
+  DashboardShell,
+  OverviewCards,
+  MetricsDashboard,
+  ActivityWidget,
+  AnalyticsCard
+} from '@beach-box/unify-ui';
+import { useDashboard } from '@/lib/hooks/useDashboard';
+import { Alert, AlertDescription, Card, CardContent, CardHeader, CardTitle, Button } from '@beach-box/unify-ui';
+import { AlertTriangle, Users, DollarSign, HardDrive, Activity, UserPlus, CreditCard, FileText, Settings } from 'lucide-react';
+import { formatMoney } from '@/lib/utils';
 
 function DashboardContent() {
-  const router = useRouter();
-  const [user, setUser] = useState<User | null>(null);
-  const [organization, setOrganization] = useState<Organization | null>(null);
-  const [stats, setStats] = useState<Stats | null>(null);
-  const [recentInvoices, setRecentInvoices] = useState<Tables<'invoices'>[]>([]);
-  const [loading, setLoading] = useState(true);
+  const { isLoading, error, metrics, engagement, revenue } = useDashboard();
 
-  useEffect(() => {
-    const getUser = async () => {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) {
-        router.push('/signin');
-        return;
-      }
-      setUser(user);
-    };
-
-    getUser();
-  }, [router]);
-
-  useEffect(() => {
-    if (!user) return;
-
-    const fetchDashboardData = async () => {
-      try {
-        // Fetch user's organization
-        const { data: orgMembership } = await supabase
-          .from('org_memberships')
-          .select('org_id, organizations(id, name)')
-          .eq('user_id', user.id)
-          .single();
-
-        if (orgMembership?.organizations) {
-          const org = orgMembership.organizations as Organization;
-          setOrganization(org);
-
-          // Fetch invoice stats
-          const { data: invoices } = await supabase
-            .from('invoices')
-            .select('*')
-            .eq('organization_id', org.id);
-
-          if (invoices) {
-            const stats: Stats = {
-              total_invoices: invoices.length,
-              total_draft: invoices.filter(inv => inv.status === 'draft').length,
-              total_sent: invoices.filter(inv => inv.status === 'sent').length,
-              total_paid: invoices.filter(inv => inv.status === 'paid').length,
-              total_overdue: invoices.filter(inv => inv.status === 'overdue').length,
-              total_amount_cents: invoices.reduce((sum, inv) => sum + (inv.total_cents || 0), 0),
-              total_paid_amount_cents: invoices
-                .filter(inv => inv.status === 'paid')
-                .reduce((sum, inv) => sum + (inv.total_cents || 0), 0),
-            };
-            setStats(stats);
-
-            // Get recent invoices
-            const recent = invoices
-              .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
-              .slice(0, 5);
-            setRecentInvoices(recent);
-          }
-        }
-      } catch (error) {
-        console.error('Error fetching dashboard data:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchDashboardData();
-  }, [user]);
-
-  if (loading) {
+  if (error) {
     return (
-      <div className="flex h-screen items-center justify-center">
-        <div className="text-lg">Loading...</div>
+      <div className="p-6">
+        <Alert variant="destructive">
+          <AlertTriangle className="h-4 w-4" />
+          <AlertDescription>
+            Failed to load dashboard data. Please try refreshing the page.
+          </AlertDescription>
+        </Alert>
       </div>
     );
   }
 
-  if (!organization) {
-    return (
-      <div className="flex h-screen items-center justify-center">
-        <div className="text-center">
-          <h2 className="text-2xl font-bold">No Organization Found</h2>
-          <p className="text-gray-600 mt-2">Please contact support to set up your organization.</p>
-        </div>
-      </div>
-    );
-  }
+  // Transform data for unify-ui components
+  const overviewCardsData = metrics ? [
+    {
+      title: 'Total Users',
+      value: metrics.users.total.toString(),
+      change: metrics.users.growth,
+      trend: metrics.users.growth > 0 ? 'up' : metrics.users.growth < 0 ? 'down' : 'neutral',
+      description: `${metrics.users.active} active users`,
+      icon: <Users className="h-4 w-4" />
+    } as const,
+    {
+      title: 'Monthly Revenue',
+      value: formatMoney(metrics.billing.mrr * 100), // Convert cents to dollars
+      change: revenue?.growth || 0,
+      trend: (revenue?.growth || 0) > 0 ? 'up' : (revenue?.growth || 0) < 0 ? 'down' : 'neutral',
+      description: 'Recurring revenue',
+      icon: <DollarSign className="h-4 w-4" />
+    } as const,
+    {
+      title: 'Storage Usage',
+      value: `${metrics.usage.storage.used.toFixed(1)} GB`,
+      description: `of ${metrics.usage.storage.limit} GB limit`,
+      icon: <HardDrive className="h-4 w-4" />
+    } as const,
+    {
+      title: 'System Health',
+      value: `${metrics.performance.uptime}%`,
+      description: `${metrics.performance.responseTime}ms avg response`,
+      icon: <Activity className="h-4 w-4" />
+    } as const
+  ] : [];
+
+  const activityData = metrics?.activity.map(activity => ({
+    id: activity.id,
+    type: 'action' as const,
+    title: activity.title,
+    description: activity.description,
+    timestamp: activity.timestamp.toISOString(), // Convert Date to string
+    user: {
+      name: activity.userEmail || 'System'
+    }
+  })) || [];
+
+  const dashboardMetrics = [
+    {
+      id: 'users',
+      label: 'Active Users', // Changed from title to label
+      value: metrics?.users.active || 0,
+      trend: {
+        value: metrics?.users.growth || 0,
+        direction: (metrics?.users.growth || 0) > 0 ? 'up' as const : (metrics?.users.growth || 0) < 0 ? 'down' as const : 'neutral' as const
+      },
+      icon: Users
+    },
+    {
+      id: 'revenue',
+      label: 'Monthly Revenue', // Changed from title to label
+      value: metrics?.billing.mrr || 0,
+      unit: '$',
+      trend: {
+        value: revenue?.growth || 0,
+        direction: (revenue?.growth || 0) > 0 ? 'up' as const : (revenue?.growth || 0) < 0 ? 'down' as const : 'neutral' as const
+      },
+      icon: DollarSign
+    },
+    {
+      id: 'storage',
+      label: 'Storage Used', // Changed from title to label
+      value: metrics?.usage.storage.used || 0,
+      unit: 'GB',
+      icon: HardDrive
+    },
+    {
+      id: 'uptime',
+      label: 'System Uptime', // Changed from title to label
+      value: metrics?.performance.uptime || 0,
+      unit: '%',
+      icon: Activity
+    }
+  ];
 
   return (
-    <div className="container mx-auto p-6">
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold">Dashboard</h1>
-        <p className="text-gray-600 mt-1">Welcome to {organization.name}</p>
-      </div>
-
-      {/* Stats Cards */}
-      <div className="grid gap-6 mb-8 md:grid-cols-2 lg:grid-cols-4">
-        <div className="bg-white rounded-lg border p-6">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm font-medium text-gray-600">Total Invoices</p>
-              <p className="text-2xl font-bold">{stats?.total_invoices || 0}</p>
-            </div>
-          </div>
+    <DashboardShell>
+      <div className="p-6 space-y-6">
+        <div>
+          <h1 className="text-3xl font-bold">Dashboard</h1>
+          <p className="text-muted-foreground">Overview of your organization's performance and activity</p>
         </div>
 
-        <div className="bg-white rounded-lg border p-6">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm font-medium text-gray-600">Total Revenue</p>
-              <p className="text-2xl font-bold">{formatMoney(stats?.total_amount_cents || 0)}</p>
-            </div>
-          </div>
-        </div>
+        {/* Overview Cards */}
+        <OverviewCards cards={overviewCardsData} columns={4} />
 
-        <div className="bg-white rounded-lg border p-6">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm font-medium text-gray-600">Paid Amount</p>
-              <p className="text-2xl font-bold">{formatMoney(stats?.total_paid_amount_cents || 0)}</p>
-            </div>
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+          {/* Main Metrics */}
+          <div className="lg:col-span-2">
+            <MetricsDashboard metrics={dashboardMetrics} loading={isLoading} />
           </div>
-        </div>
 
-        <div className="bg-white rounded-lg border p-6">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm font-medium text-gray-600">Pending</p>
-              <p className="text-2xl font-bold">{(stats?.total_sent || 0) + (stats?.total_overdue || 0)}</p>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Recent Invoices */}
-      <div className="bg-white rounded-lg border">
-        <div className="p-6 border-b">
-          <div className="flex items-center justify-between">
-            <h2 className="text-xl font-semibold">Recent Invoices</h2>
-            <Link href="/invoices">
-              <Button variant="outline" size="sm">
-                View All
+          {/* Quick Actions */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Quick Actions</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-2">
+              <Button variant="outline" className="w-full justify-start" asChild>
+                <a href="/team?action=invite">
+                  <UserPlus className="mr-2 h-4 w-4" />
+                  Invite Team Member
+                </a>
               </Button>
-            </Link>
-          </div>
+              <Button variant="outline" className="w-full justify-start" asChild>
+                <a href="/billing?tab=subscription">
+                  <CreditCard className="mr-2 h-4 w-4" />
+                  Upgrade Plan
+                </a>
+              </Button>
+              <Button variant="outline" className="w-full justify-start" asChild>
+                <a href="/invoices/new">
+                  <FileText className="mr-2 h-4 w-4" />
+                  Create Invoice
+                </a>
+              </Button>
+              <Button variant="outline" className="w-full justify-start" asChild>
+                <a href="/settings">
+                  <Settings className="mr-2 h-4 w-4" />
+                  Account Settings
+                </a>
+              </Button>
+            </CardContent>
+          </Card>
         </div>
-        <div className="p-6">
-          {recentInvoices.length > 0 ? (
-            <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead>
-                  <tr className="border-b">
-                    <th className="text-left py-2 text-sm font-medium text-gray-600">Invoice #</th>
-                    <th className="text-left py-2 text-sm font-medium text-gray-600">Customer</th>
-                    <th className="text-left py-2 text-sm font-medium text-gray-600">Amount</th>
-                    <th className="text-left py-2 text-sm font-medium text-gray-600">Status</th>
-                    <th className="text-left py-2 text-sm font-medium text-gray-600">Date</th>
-                    <th className="text-left py-2 text-sm font-medium text-gray-600">Actions</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {recentInvoices.map((invoice) => (
-                    <tr key={invoice.id} className="border-b last:border-b-0">
-                      <td className="py-3">
-                        <span className="font-medium">#{invoice.id.slice(0, 8)}</span>
-                      </td>
-                      <td className="py-3">
-                        <span>{invoice.metadata?.customer_email || 'N/A'}</span>
-                      </td>
-                      <td className="py-3">
-                        <span className="font-medium">{formatMoney(invoice.total_cents || 0)}</span>
-                      </td>
-                      <td className="py-3">
-                        <InvoiceStatusBadge status={invoice.status} />
-                      </td>
-                      <td className="py-3">
-                        <span className="text-gray-600">{formatDate(invoice.created_at)}</span>
-                      </td>
-                      <td className="py-3">
-                        <Link href={`/invoices/${invoice.id}`}>
-                          <Button variant="ghost" size="sm">
-                            View
-                          </Button>
-                        </Link>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          ) : (
-            <div className="text-center py-8">
-              <p className="text-gray-600">No invoices yet</p>
-              <Link href="/invoices/new">
-                <Button className="mt-4">
-                  Create Your First Invoice
-                </Button>
-              </Link>
-            </div>
-          )}
+
+        <div className="grid gap-6 md:grid-cols-2">
+          {/* Activity Feed */}
+          <ActivityWidget
+            activities={activityData}
+            title="Recent Activity"
+            maxItems={10}
+          />
+
+          {/* Analytics Card */}
+          <AnalyticsCard
+            title="User Engagement"
+            description="User retention and activity metrics"
+            metric={engagement ? {
+              value: engagement.retentionRate,
+              unit: '%',
+              change: engagement.retentionRate > 50 ? 12 : -5,
+              trend: engagement.retentionRate > 50 ? 'up' : 'down'
+            } : undefined}
+          />
         </div>
       </div>
-    </div>
+    </DashboardShell>
+  );
+}
+
+function DashboardSkeleton() {
+  return (
+    <DashboardShell>
+      <div className="p-6 space-y-6">
+        <div className="space-y-2">
+          <div className="h-8 w-48 bg-gray-200 rounded animate-pulse"></div>
+          <div className="h-4 w-96 bg-gray-200 rounded animate-pulse"></div>
+        </div>
+
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+          {Array.from({ length: 4 }).map((_, i) => (
+            <div key={i} className="h-32 bg-gray-200 rounded-lg animate-pulse" />
+          ))}
+        </div>
+
+        <div className="grid gap-6 md:grid-cols-2">
+          {Array.from({ length: 2 }).map((_, i) => (
+            <div key={i} className="h-80 bg-gray-200 rounded-lg animate-pulse" />
+          ))}
+        </div>
+      </div>
+    </DashboardShell>
   );
 }
 
 export default function DashboardPage() {
   return (
-    <Suspense fallback={<div>Loading...</div>}>
+    <Suspense fallback={<DashboardSkeleton />}>
       <DashboardContent />
     </Suspense>
   );

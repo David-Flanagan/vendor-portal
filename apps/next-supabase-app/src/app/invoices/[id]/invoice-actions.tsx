@@ -1,7 +1,7 @@
 'use client';
 
 import { Tables } from '@/types/supabase';
-import { Button } from '@/components/ui/button';
+import { Button } from '@beach-box/unify-ui';
 import { useUpdateInvoiceStatus } from '@/lib/hooks/useInvoices';
 
 interface InvoiceActionsProps {

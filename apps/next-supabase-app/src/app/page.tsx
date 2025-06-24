@@ -2,8 +2,7 @@
 
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/auth';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button, Card, CardContent, CardDescription, CardHeader, CardTitle } from '@beach-box/unify-ui';
 import {
   Shield,
   Users,

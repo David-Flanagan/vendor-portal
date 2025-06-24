@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Button } from './ui/button';
+import { Button } from '@beach-box/unify-ui';
 import { formatMoney } from '@/lib/utils';
 import { Tables } from '@/types/supabase';
 

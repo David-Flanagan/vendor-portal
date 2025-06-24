@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import Link from 'next/link';
-import { Button } from '@/components/ui/button';
+import { Button } from '@beach-box/unify-ui';
 import PaymentForm from '@/components/payment-form';
 import PaymentProcessor from './payment-processor';
 import { supabase } from '@/lib/supabase';
