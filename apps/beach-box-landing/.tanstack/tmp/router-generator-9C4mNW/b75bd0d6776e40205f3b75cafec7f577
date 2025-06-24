@@ -25,14 +25,13 @@ import { Route as AdminRouteImport } from './routes/admin'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AdminIndexRouteImport } from './routes/admin/index'
-import { Route as DashboardTestRouteImport } from './routes/dashboard/test'
 import { Route as AdminProductsRouteImport } from './routes/admin/products'
 import { Route as AdminProductTypesRouteImport } from './routes/admin/product-types'
-import { Route as AdminPendingRequestsRouteImport } from './routes/admin/pending-requests'
 import { Route as AdminMachinesRouteImport } from './routes/admin/machines'
 import { Route as AdminCustomerMachinesRouteImport } from './routes/admin/customer-machines'
 import { Route as AdminCategoriesRouteImport } from './routes/admin/categories'
 import { Route as AdminBasePricesRouteImport } from './routes/admin/base-prices'
+import { Route as DashboardMachineChar91idChar93RouteImport } from './routes/dashboard/machine/[id]'
 
 const WhyBeachBoxRoute = WhyBeachBoxRouteImport.update({
   id: '/why-beach-box',
@@ -114,11 +113,6 @@ const AdminIndexRoute = AdminIndexRouteImport.update({
   path: '/',
   getParentRoute: () => AdminRoute,
 } as any)
-const DashboardTestRoute = DashboardTestRouteImport.update({
-  id: '/test',
-  path: '/test',
-  getParentRoute: () => DashboardRoute,
-} as any)
 const AdminProductsRoute = AdminProductsRouteImport.update({
   id: '/products',
   path: '/products',
@@ -127,11 +121,6 @@ const AdminProductsRoute = AdminProductsRouteImport.update({
 const AdminProductTypesRoute = AdminProductTypesRouteImport.update({
   id: '/product-types',
   path: '/product-types',
-  getParentRoute: () => AdminRoute,
-} as any)
-const AdminPendingRequestsRoute = AdminPendingRequestsRouteImport.update({
-  id: '/pending-requests',
-  path: '/pending-requests',
   getParentRoute: () => AdminRoute,
 } as any)
 const AdminMachinesRoute = AdminMachinesRouteImport.update({
@@ -154,6 +143,12 @@ const AdminBasePricesRoute = AdminBasePricesRouteImport.update({
   path: '/base-prices',
   getParentRoute: () => AdminRoute,
 } as any)
+const DashboardMachineChar91idChar93Route =
+  DashboardMachineChar91idChar93RouteImport.update({
+    id: '/machine/[id]',
+    path: '/machine/[id]',
+    getParentRoute: () => DashboardRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -175,11 +170,10 @@ export interface FileRoutesByFullPath {
   '/admin/categories': typeof AdminCategoriesRoute
   '/admin/customer-machines': typeof AdminCustomerMachinesRoute
   '/admin/machines': typeof AdminMachinesRoute
-  '/admin/pending-requests': typeof AdminPendingRequestsRoute
   '/admin/product-types': typeof AdminProductTypesRoute
   '/admin/products': typeof AdminProductsRoute
-  '/dashboard/test': typeof DashboardTestRoute
   '/admin/': typeof AdminIndexRoute
+  '/dashboard/machine/[id]': typeof DashboardMachineChar91idChar93Route
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -200,11 +194,10 @@ export interface FileRoutesByTo {
   '/admin/categories': typeof AdminCategoriesRoute
   '/admin/customer-machines': typeof AdminCustomerMachinesRoute
   '/admin/machines': typeof AdminMachinesRoute
-  '/admin/pending-requests': typeof AdminPendingRequestsRoute
   '/admin/product-types': typeof AdminProductTypesRoute
   '/admin/products': typeof AdminProductsRoute
-  '/dashboard/test': typeof DashboardTestRoute
   '/admin': typeof AdminIndexRoute
+  '/dashboard/machine/[id]': typeof DashboardMachineChar91idChar93Route
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -227,11 +220,10 @@ export interface FileRoutesById {
   '/admin/categories': typeof AdminCategoriesRoute
   '/admin/customer-machines': typeof AdminCustomerMachinesRoute
   '/admin/machines': typeof AdminMachinesRoute
-  '/admin/pending-requests': typeof AdminPendingRequestsRoute
   '/admin/product-types': typeof AdminProductTypesRoute
   '/admin/products': typeof AdminProductsRoute
-  '/dashboard/test': typeof DashboardTestRoute
   '/admin/': typeof AdminIndexRoute
+  '/dashboard/machine/[id]': typeof DashboardMachineChar91idChar93Route
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -255,11 +247,10 @@ export interface FileRouteTypes {
     | '/admin/categories'
     | '/admin/customer-machines'
     | '/admin/machines'
-    | '/admin/pending-requests'
     | '/admin/product-types'
     | '/admin/products'
-    | '/dashboard/test'
     | '/admin/'
+    | '/dashboard/machine/[id]'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -280,11 +271,10 @@ export interface FileRouteTypes {
     | '/admin/categories'
     | '/admin/customer-machines'
     | '/admin/machines'
-    | '/admin/pending-requests'
     | '/admin/product-types'
     | '/admin/products'
-    | '/dashboard/test'
     | '/admin'
+    | '/dashboard/machine/[id]'
   id:
     | '__root__'
     | '/'
@@ -306,11 +296,10 @@ export interface FileRouteTypes {
     | '/admin/categories'
     | '/admin/customer-machines'
     | '/admin/machines'
-    | '/admin/pending-requests'
     | '/admin/product-types'
     | '/admin/products'
-    | '/dashboard/test'
     | '/admin/'
+    | '/dashboard/machine/[id]'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -445,13 +434,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminIndexRouteImport
       parentRoute: typeof AdminRoute
     }
-    '/dashboard/test': {
-      id: '/dashboard/test'
-      path: '/test'
-      fullPath: '/dashboard/test'
-      preLoaderRoute: typeof DashboardTestRouteImport
-      parentRoute: typeof DashboardRoute
-    }
     '/admin/products': {
       id: '/admin/products'
       path: '/products'
@@ -464,13 +446,6 @@ declare module '@tanstack/react-router' {
       path: '/product-types'
       fullPath: '/admin/product-types'
       preLoaderRoute: typeof AdminProductTypesRouteImport
-      parentRoute: typeof AdminRoute
-    }
-    '/admin/pending-requests': {
-      id: '/admin/pending-requests'
-      path: '/pending-requests'
-      fullPath: '/admin/pending-requests'
-      preLoaderRoute: typeof AdminPendingRequestsRouteImport
       parentRoute: typeof AdminRoute
     }
     '/admin/machines': {
@@ -501,6 +476,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminBasePricesRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/dashboard/machine/[id]': {
+      id: '/dashboard/machine/[id]'
+      path: '/machine/[id]'
+      fullPath: '/dashboard/machine/[id]'
+      preLoaderRoute: typeof DashboardMachineChar91idChar93RouteImport
+      parentRoute: typeof DashboardRoute
+    }
   }
 }
 
@@ -509,7 +491,6 @@ interface AdminRouteChildren {
   AdminCategoriesRoute: typeof AdminCategoriesRoute
   AdminCustomerMachinesRoute: typeof AdminCustomerMachinesRoute
   AdminMachinesRoute: typeof AdminMachinesRoute
-  AdminPendingRequestsRoute: typeof AdminPendingRequestsRoute
   AdminProductTypesRoute: typeof AdminProductTypesRoute
   AdminProductsRoute: typeof AdminProductsRoute
   AdminIndexRoute: typeof AdminIndexRoute
@@ -520,7 +501,6 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminCategoriesRoute: AdminCategoriesRoute,
   AdminCustomerMachinesRoute: AdminCustomerMachinesRoute,
   AdminMachinesRoute: AdminMachinesRoute,
-  AdminPendingRequestsRoute: AdminPendingRequestsRoute,
   AdminProductTypesRoute: AdminProductTypesRoute,
   AdminProductsRoute: AdminProductsRoute,
   AdminIndexRoute: AdminIndexRoute,
@@ -529,11 +509,11 @@ const AdminRouteChildren: AdminRouteChildren = {
 const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
 
 interface DashboardRouteChildren {
-  DashboardTestRoute: typeof DashboardTestRoute
+  DashboardMachineChar91idChar93Route: typeof DashboardMachineChar91idChar93Route
 }
 
 const DashboardRouteChildren: DashboardRouteChildren = {
-  DashboardTestRoute: DashboardTestRoute,
+  DashboardMachineChar91idChar93Route: DashboardMachineChar91idChar93Route,
 }
 
 const DashboardRouteWithChildren = DashboardRoute._addFileChildren(

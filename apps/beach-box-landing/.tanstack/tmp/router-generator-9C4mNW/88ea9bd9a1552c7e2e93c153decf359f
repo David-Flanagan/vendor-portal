@@ -1,0 +1,70 @@
+import { createFileRoute, useParams } from '@tanstack/react-router';
+import React, { useEffect, useState } from 'react';
+import { useAuth } from '../../../components/AuthProvider';
+import { supabase } from '../../../lib/supabaseClient';
+
+function MachineDetail() {
+  const { id } = useParams({ strict: false });
+  const { user } = useAuth();
+  const [machine, setMachine] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (user && id) {
+      supabase
+        .from('customer_machines')
+        .select('*')
+        .eq('id', id)
+        .single()
+        .then(({ data }) => {
+          setMachine(data);
+          setLoading(false);
+        });
+    }
+  }, [user, id]);
+
+  if (loading) return <div style={{ textAlign: 'center', marginTop: 80 }}>Loading...</div>;
+  if (!machine) return <div style={{ textAlign: 'center', marginTop: 80, color: '#ef4444' }}>Machine not found.</div>;
+
+  return (
+    <div style={{ maxWidth: 600, margin: '80px auto', background: '#fff', borderRadius: 12, border: '1px solid #e5e7eb', padding: 32 }}>
+      <h1 style={{ fontSize: 28, fontWeight: 600, marginBottom: 16 }}>Machine Details</h1>
+      <div style={{ marginBottom: 16 }}>
+        <div style={{ fontWeight: 600, fontSize: 18 }}>{machine.business_name}</div>
+        <div style={{ color: '#64748b', fontSize: 14 }}>{machine.address}{machine.suite ? `, ${machine.suite}` : ''}</div>
+        <div style={{ fontSize: 13, margin: '8px 0' }}>
+          <span style={{ fontWeight: 500 }}>Status: </span>
+          {machine.approved ? (
+            <span style={{ color: '#22c55e', fontWeight: 600 }}>Approved</span>
+          ) : (
+            <span style={{ color: '#64748b', fontWeight: 600 }}>Pending Approval</span>
+          )}
+        </div>
+        <div style={{ fontSize: 13, marginBottom: 8 }}>
+          <span style={{ fontWeight: 500 }}>Contact: </span>
+          {machine.contact_name} | {machine.contact_email} | {machine.contact_phone}
+        </div>
+        <div style={{ fontSize: 13, marginBottom: 8 }}>
+          <span style={{ fontWeight: 500 }}>Instructions: </span>
+          {machine.delivery_instructions || '-'}
+        </div>
+      </div>
+      <div style={{ marginBottom: 16 }}>
+        <h3 style={{ fontSize: 16, fontWeight: 600 }}>Slot Selections</h3>
+        <div style={{ color: '#64748b', fontSize: 13 }}>[Slot selections go here]</div>
+      </div>
+      <div style={{ marginBottom: 16 }}>
+        <h3 style={{ fontSize: 16, fontWeight: 600 }}>Pricing</h3>
+        <div style={{ color: '#64748b', fontSize: 13 }}>[Pricing info goes here]</div>
+      </div>
+      <div>
+        <h3 style={{ fontSize: 16, fontWeight: 600 }}>Nayax Data</h3>
+        <div style={{ color: '#64748b', fontSize: 13 }}>[Nayax status/sales go here]</div>
+      </div>
+    </div>
+  );
+}
+
+export const Route = createFileRoute('/dashboard/machine/[id]')({
+  component: MachineDetail,
+}); 

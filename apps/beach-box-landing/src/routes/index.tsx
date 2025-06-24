@@ -7,6 +7,7 @@ import {
   CTASimple
 } from '@beach-box/unify-ui'
 import { DollarSign, Shield, Clock, Users, Award, TrendingUp, CheckCircle, Building } from 'lucide-react'
+import { Link } from '@tanstack/react-router'
 
 export const Route = createFileRoute('/')({
   component: Index,
@@ -261,6 +262,10 @@ function Index() {
           }}
         />
       </section>
+
+      <Link to="/dashboard" style={{ display: 'inline-block', margin: '24px 0', padding: '12px 24px', background: '#2563eb', color: '#fff', borderRadius: 8, textDecoration: 'none' }}>
+        Go to Dashboard
+      </Link>
     </div>
   )
 }

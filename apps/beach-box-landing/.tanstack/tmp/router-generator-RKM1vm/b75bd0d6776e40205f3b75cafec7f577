@@ -15,7 +15,7 @@ import { Route as SigninRouteImport } from './routes/signin'
 import { Route as PricingRouteImport } from './routes/pricing'
 import { Route as PartnershipModelsRouteImport } from './routes/partnership-models'
 import { Route as PartnersRouteImport } from './routes/partners'
-import { Route as OnboardMachineRouteImport } from './routes/onboard-machine'
+import { Route as OnboardingRouteImport } from './routes/onboarding'
 import { Route as LocationsRouteImport } from './routes/locations'
 import { Route as FeaturesRouteImport } from './routes/features'
 import { Route as DashboardRouteImport } from './routes/dashboard'
@@ -25,14 +25,9 @@ import { Route as AdminRouteImport } from './routes/admin'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AdminIndexRouteImport } from './routes/admin/index'
-import { Route as DashboardTestRouteImport } from './routes/dashboard/test'
-import { Route as AdminProductsRouteImport } from './routes/admin/products'
 import { Route as AdminProductTypesRouteImport } from './routes/admin/product-types'
-import { Route as AdminPendingRequestsRouteImport } from './routes/admin/pending-requests'
 import { Route as AdminMachinesRouteImport } from './routes/admin/machines'
-import { Route as AdminCustomerMachinesRouteImport } from './routes/admin/customer-machines'
 import { Route as AdminCategoriesRouteImport } from './routes/admin/categories'
-import { Route as AdminBasePricesRouteImport } from './routes/admin/base-prices'
 
 const WhyBeachBoxRoute = WhyBeachBoxRouteImport.update({
   id: '/why-beach-box',
@@ -64,9 +59,9 @@ const PartnersRoute = PartnersRouteImport.update({
   path: '/partners',
   getParentRoute: () => rootRouteImport,
 } as any)
-const OnboardMachineRoute = OnboardMachineRouteImport.update({
-  id: '/onboard-machine',
-  path: '/onboard-machine',
+const OnboardingRoute = OnboardingRouteImport.update({
+  id: '/onboarding',
+  path: '/onboarding',
   getParentRoute: () => rootRouteImport,
 } as any)
 const LocationsRoute = LocationsRouteImport.update({
@@ -114,24 +109,9 @@ const AdminIndexRoute = AdminIndexRouteImport.update({
   path: '/',
   getParentRoute: () => AdminRoute,
 } as any)
-const DashboardTestRoute = DashboardTestRouteImport.update({
-  id: '/test',
-  path: '/test',
-  getParentRoute: () => DashboardRoute,
-} as any)
-const AdminProductsRoute = AdminProductsRouteImport.update({
-  id: '/products',
-  path: '/products',
-  getParentRoute: () => AdminRoute,
-} as any)
 const AdminProductTypesRoute = AdminProductTypesRouteImport.update({
   id: '/product-types',
   path: '/product-types',
-  getParentRoute: () => AdminRoute,
-} as any)
-const AdminPendingRequestsRoute = AdminPendingRequestsRouteImport.update({
-  id: '/pending-requests',
-  path: '/pending-requests',
   getParentRoute: () => AdminRoute,
 } as any)
 const AdminMachinesRoute = AdminMachinesRouteImport.update({
@@ -139,19 +119,9 @@ const AdminMachinesRoute = AdminMachinesRouteImport.update({
   path: '/machines',
   getParentRoute: () => AdminRoute,
 } as any)
-const AdminCustomerMachinesRoute = AdminCustomerMachinesRouteImport.update({
-  id: '/customer-machines',
-  path: '/customer-machines',
-  getParentRoute: () => AdminRoute,
-} as any)
 const AdminCategoriesRoute = AdminCategoriesRouteImport.update({
   id: '/categories',
   path: '/categories',
-  getParentRoute: () => AdminRoute,
-} as any)
-const AdminBasePricesRoute = AdminBasePricesRouteImport.update({
-  id: '/base-prices',
-  path: '/base-prices',
   getParentRoute: () => AdminRoute,
 } as any)
 
@@ -161,24 +131,19 @@ export interface FileRoutesByFullPath {
   '/admin': typeof AdminRouteWithChildren
   '/case-studies': typeof CaseStudiesRoute
   '/contact': typeof ContactRoute
-  '/dashboard': typeof DashboardRouteWithChildren
+  '/dashboard': typeof DashboardRoute
   '/features': typeof FeaturesRoute
   '/locations': typeof LocationsRoute
-  '/onboard-machine': typeof OnboardMachineRoute
+  '/onboarding': typeof OnboardingRoute
   '/partners': typeof PartnersRoute
   '/partnership-models': typeof PartnershipModelsRoute
   '/pricing': typeof PricingRoute
   '/signin': typeof SigninRoute
   '/signup': typeof SignupRoute
   '/why-beach-box': typeof WhyBeachBoxRoute
-  '/admin/base-prices': typeof AdminBasePricesRoute
   '/admin/categories': typeof AdminCategoriesRoute
-  '/admin/customer-machines': typeof AdminCustomerMachinesRoute
   '/admin/machines': typeof AdminMachinesRoute
-  '/admin/pending-requests': typeof AdminPendingRequestsRoute
   '/admin/product-types': typeof AdminProductTypesRoute
-  '/admin/products': typeof AdminProductsRoute
-  '/dashboard/test': typeof DashboardTestRoute
   '/admin/': typeof AdminIndexRoute
 }
 export interface FileRoutesByTo {
@@ -186,24 +151,19 @@ export interface FileRoutesByTo {
   '/about': typeof AboutRoute
   '/case-studies': typeof CaseStudiesRoute
   '/contact': typeof ContactRoute
-  '/dashboard': typeof DashboardRouteWithChildren
+  '/dashboard': typeof DashboardRoute
   '/features': typeof FeaturesRoute
   '/locations': typeof LocationsRoute
-  '/onboard-machine': typeof OnboardMachineRoute
+  '/onboarding': typeof OnboardingRoute
   '/partners': typeof PartnersRoute
   '/partnership-models': typeof PartnershipModelsRoute
   '/pricing': typeof PricingRoute
   '/signin': typeof SigninRoute
   '/signup': typeof SignupRoute
   '/why-beach-box': typeof WhyBeachBoxRoute
-  '/admin/base-prices': typeof AdminBasePricesRoute
   '/admin/categories': typeof AdminCategoriesRoute
-  '/admin/customer-machines': typeof AdminCustomerMachinesRoute
   '/admin/machines': typeof AdminMachinesRoute
-  '/admin/pending-requests': typeof AdminPendingRequestsRoute
   '/admin/product-types': typeof AdminProductTypesRoute
-  '/admin/products': typeof AdminProductsRoute
-  '/dashboard/test': typeof DashboardTestRoute
   '/admin': typeof AdminIndexRoute
 }
 export interface FileRoutesById {
@@ -213,24 +173,19 @@ export interface FileRoutesById {
   '/admin': typeof AdminRouteWithChildren
   '/case-studies': typeof CaseStudiesRoute
   '/contact': typeof ContactRoute
-  '/dashboard': typeof DashboardRouteWithChildren
+  '/dashboard': typeof DashboardRoute
   '/features': typeof FeaturesRoute
   '/locations': typeof LocationsRoute
-  '/onboard-machine': typeof OnboardMachineRoute
+  '/onboarding': typeof OnboardingRoute
   '/partners': typeof PartnersRoute
   '/partnership-models': typeof PartnershipModelsRoute
   '/pricing': typeof PricingRoute
   '/signin': typeof SigninRoute
   '/signup': typeof SignupRoute
   '/why-beach-box': typeof WhyBeachBoxRoute
-  '/admin/base-prices': typeof AdminBasePricesRoute
   '/admin/categories': typeof AdminCategoriesRoute
-  '/admin/customer-machines': typeof AdminCustomerMachinesRoute
   '/admin/machines': typeof AdminMachinesRoute
-  '/admin/pending-requests': typeof AdminPendingRequestsRoute
   '/admin/product-types': typeof AdminProductTypesRoute
-  '/admin/products': typeof AdminProductsRoute
-  '/dashboard/test': typeof DashboardTestRoute
   '/admin/': typeof AdminIndexRoute
 }
 export interface FileRouteTypes {
@@ -244,21 +199,16 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/features'
     | '/locations'
-    | '/onboard-machine'
+    | '/onboarding'
     | '/partners'
     | '/partnership-models'
     | '/pricing'
     | '/signin'
     | '/signup'
     | '/why-beach-box'
-    | '/admin/base-prices'
     | '/admin/categories'
-    | '/admin/customer-machines'
     | '/admin/machines'
-    | '/admin/pending-requests'
     | '/admin/product-types'
-    | '/admin/products'
-    | '/dashboard/test'
     | '/admin/'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -269,21 +219,16 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/features'
     | '/locations'
-    | '/onboard-machine'
+    | '/onboarding'
     | '/partners'
     | '/partnership-models'
     | '/pricing'
     | '/signin'
     | '/signup'
     | '/why-beach-box'
-    | '/admin/base-prices'
     | '/admin/categories'
-    | '/admin/customer-machines'
     | '/admin/machines'
-    | '/admin/pending-requests'
     | '/admin/product-types'
-    | '/admin/products'
-    | '/dashboard/test'
     | '/admin'
   id:
     | '__root__'
@@ -295,21 +240,16 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/features'
     | '/locations'
-    | '/onboard-machine'
+    | '/onboarding'
     | '/partners'
     | '/partnership-models'
     | '/pricing'
     | '/signin'
     | '/signup'
     | '/why-beach-box'
-    | '/admin/base-prices'
     | '/admin/categories'
-    | '/admin/customer-machines'
     | '/admin/machines'
-    | '/admin/pending-requests'
     | '/admin/product-types'
-    | '/admin/products'
-    | '/dashboard/test'
     | '/admin/'
   fileRoutesById: FileRoutesById
 }
@@ -319,10 +259,10 @@ export interface RootRouteChildren {
   AdminRoute: typeof AdminRouteWithChildren
   CaseStudiesRoute: typeof CaseStudiesRoute
   ContactRoute: typeof ContactRoute
-  DashboardRoute: typeof DashboardRouteWithChildren
+  DashboardRoute: typeof DashboardRoute
   FeaturesRoute: typeof FeaturesRoute
   LocationsRoute: typeof LocationsRoute
-  OnboardMachineRoute: typeof OnboardMachineRoute
+  OnboardingRoute: typeof OnboardingRoute
   PartnersRoute: typeof PartnersRoute
   PartnershipModelsRoute: typeof PartnershipModelsRoute
   PricingRoute: typeof PricingRoute
@@ -375,11 +315,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PartnersRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/onboard-machine': {
-      id: '/onboard-machine'
-      path: '/onboard-machine'
-      fullPath: '/onboard-machine'
-      preLoaderRoute: typeof OnboardMachineRouteImport
+    '/onboarding': {
+      id: '/onboarding'
+      path: '/onboarding'
+      fullPath: '/onboarding'
+      preLoaderRoute: typeof OnboardingRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/locations': {
@@ -445,32 +385,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminIndexRouteImport
       parentRoute: typeof AdminRoute
     }
-    '/dashboard/test': {
-      id: '/dashboard/test'
-      path: '/test'
-      fullPath: '/dashboard/test'
-      preLoaderRoute: typeof DashboardTestRouteImport
-      parentRoute: typeof DashboardRoute
-    }
-    '/admin/products': {
-      id: '/admin/products'
-      path: '/products'
-      fullPath: '/admin/products'
-      preLoaderRoute: typeof AdminProductsRouteImport
-      parentRoute: typeof AdminRoute
-    }
     '/admin/product-types': {
       id: '/admin/product-types'
       path: '/product-types'
       fullPath: '/admin/product-types'
       preLoaderRoute: typeof AdminProductTypesRouteImport
-      parentRoute: typeof AdminRoute
-    }
-    '/admin/pending-requests': {
-      id: '/admin/pending-requests'
-      path: '/pending-requests'
-      fullPath: '/admin/pending-requests'
-      preLoaderRoute: typeof AdminPendingRequestsRouteImport
       parentRoute: typeof AdminRoute
     }
     '/admin/machines': {
@@ -480,13 +399,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminMachinesRouteImport
       parentRoute: typeof AdminRoute
     }
-    '/admin/customer-machines': {
-      id: '/admin/customer-machines'
-      path: '/customer-machines'
-      fullPath: '/admin/customer-machines'
-      preLoaderRoute: typeof AdminCustomerMachinesRouteImport
-      parentRoute: typeof AdminRoute
-    }
     '/admin/categories': {
       id: '/admin/categories'
       path: '/categories'
@@ -494,51 +406,24 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminCategoriesRouteImport
       parentRoute: typeof AdminRoute
     }
-    '/admin/base-prices': {
-      id: '/admin/base-prices'
-      path: '/base-prices'
-      fullPath: '/admin/base-prices'
-      preLoaderRoute: typeof AdminBasePricesRouteImport
-      parentRoute: typeof AdminRoute
-    }
   }
 }
 
 interface AdminRouteChildren {
-  AdminBasePricesRoute: typeof AdminBasePricesRoute
   AdminCategoriesRoute: typeof AdminCategoriesRoute
-  AdminCustomerMachinesRoute: typeof AdminCustomerMachinesRoute
   AdminMachinesRoute: typeof AdminMachinesRoute
-  AdminPendingRequestsRoute: typeof AdminPendingRequestsRoute
   AdminProductTypesRoute: typeof AdminProductTypesRoute
-  AdminProductsRoute: typeof AdminProductsRoute
   AdminIndexRoute: typeof AdminIndexRoute
 }
 
 const AdminRouteChildren: AdminRouteChildren = {
-  AdminBasePricesRoute: AdminBasePricesRoute,
   AdminCategoriesRoute: AdminCategoriesRoute,
-  AdminCustomerMachinesRoute: AdminCustomerMachinesRoute,
   AdminMachinesRoute: AdminMachinesRoute,
-  AdminPendingRequestsRoute: AdminPendingRequestsRoute,
   AdminProductTypesRoute: AdminProductTypesRoute,
-  AdminProductsRoute: AdminProductsRoute,
   AdminIndexRoute: AdminIndexRoute,
 }
 
 const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
-
-interface DashboardRouteChildren {
-  DashboardTestRoute: typeof DashboardTestRoute
-}
-
-const DashboardRouteChildren: DashboardRouteChildren = {
-  DashboardTestRoute: DashboardTestRoute,
-}
-
-const DashboardRouteWithChildren = DashboardRoute._addFileChildren(
-  DashboardRouteChildren,
-)
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
@@ -546,10 +431,10 @@ const rootRouteChildren: RootRouteChildren = {
   AdminRoute: AdminRouteWithChildren,
   CaseStudiesRoute: CaseStudiesRoute,
   ContactRoute: ContactRoute,
-  DashboardRoute: DashboardRouteWithChildren,
+  DashboardRoute: DashboardRoute,
   FeaturesRoute: FeaturesRoute,
   LocationsRoute: LocationsRoute,
-  OnboardMachineRoute: OnboardMachineRoute,
+  OnboardingRoute: OnboardingRoute,
   PartnersRoute: PartnersRoute,
   PartnershipModelsRoute: PartnershipModelsRoute,
   PricingRoute: PricingRoute,

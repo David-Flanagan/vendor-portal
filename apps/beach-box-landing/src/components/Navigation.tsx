@@ -40,16 +40,12 @@ export function Navigation() {
           </div>
 
           {/* Desktop CTA */}
-          <div className="hidden md:flex items-center space-x-4">
-            <Link search={{ subject: undefined, model: undefined }} to="/contact">
-              <Button size="sm" variant="outline">
-                Schedule Consult
-              </Button>
-            </Link>
-            <Link search={{ subject: undefined, model: undefined }} to="/contact">
-              <Button size="sm">
-                Apply Now
-              </Button>
+          <div className="hidden md:flex items-center space-x-8">
+            <Link
+              to="/signin"
+              className="px-4 py-2 bg-beach-500 text-white rounded hover:bg-beach-600 transition-colors font-semibold"
+            >
+              Sign In
             </Link>
           </div>
 
