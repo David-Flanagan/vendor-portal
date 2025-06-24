@@ -115,27 +115,26 @@ CREATE TABLE subscriptions (
   stripe_price_id text NOT NULL,
 
   -- Subscription details
-  status text NOT NULL CHECK (status IN ('active', 'canceled', 'incomplete', 'incomplete_expired', 'past_due', 'trialing', 'unpaid')),
+  status text NOT NULL CHECK (status IN ('incomplete', 'incomplete_expired', 'trialing', 'active', 'past_due', 'canceled', 'unpaid')),
   tier text NOT NULL CHECK (tier IN ('starter', 'professional', 'enterprise')),
 
-  -- Billing cycle
-  billing_cycle text NOT NULL CHECK (billing_cycle IN ('monthly', 'yearly')),
-  amount_cents int NOT NULL,
-  currency text DEFAULT 'USD',
-
-  -- Dates
+  -- Billing
   current_period_start timestamptz NOT NULL,
   current_period_end timestamptz NOT NULL,
+  cancel_at_period_end boolean DEFAULT false,
+  canceled_at timestamptz,
   trial_start timestamptz,
   trial_end timestamptz,
-  canceled_at timestamptz,
-  ended_at timestamptz,
+
+  -- Pricing
+  amount_cents int NOT NULL,
+  currency text DEFAULT 'USD',
+  interval_type text CHECK (interval_type IN ('month', 'year')),
 
   -- Metadata
+  metadata jsonb DEFAULT '{}',
   created_at timestamptz DEFAULT now(),
-  updated_at timestamptz DEFAULT now(),
-
-  UNIQUE(company_id)
+  updated_at timestamptz DEFAULT now()
 );
 
 -- Invoices - Billing history
@@ -146,18 +145,17 @@ CREATE TABLE invoices (
 
   -- Stripe details
   stripe_invoice_id text UNIQUE NOT NULL,
-  stripe_payment_intent_id text,
 
   -- Invoice details
-  number text,
-  status text NOT NULL CHECK (status IN ('draft', 'open', 'paid', 'void', 'uncollectible')),
+  invoice_number text,
+  status text NOT NULL CHECK (status IN ('draft', 'open', 'paid', 'uncollectible', 'void')),
 
   -- Amounts
-  subtotal_cents int NOT NULL,
+  amount_due_cents int NOT NULL DEFAULT 0,
+  amount_paid_cents int NOT NULL DEFAULT 0,
+  subtotal_cents int NOT NULL DEFAULT 0,
   tax_cents int DEFAULT 0,
-  total_cents int NOT NULL,
-  amount_paid_cents int DEFAULT 0,
-  amount_due_cents int NOT NULL,
+  total_cents int NOT NULL DEFAULT 0,
   currency text DEFAULT 'USD',
 
   -- Dates
@@ -165,16 +163,16 @@ CREATE TABLE invoices (
   due_date timestamptz,
   paid_at timestamptz,
 
-  -- Additional data
-  description text,
-  metadata jsonb DEFAULT '{}',
+  -- Invoice items
+  line_items jsonb DEFAULT '[]',
 
-  -- Timestamps
+  -- Metadata
+  metadata jsonb DEFAULT '{}',
   created_at timestamptz DEFAULT now(),
   updated_at timestamptz DEFAULT now()
 );
 
--- Payments - Payment history
+-- Payments - Payment processing history
 CREATE TABLE payments (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   company_id uuid NOT NULL REFERENCES companies(id) ON DELETE CASCADE,
@@ -402,118 +400,99 @@ CREATE POLICY "Users can view company audit logs" ON audit_logs
 -- FUNCTIONS
 -- =============================================================================
 
--- Function to create a user profile on signup
-CREATE OR REPLACE FUNCTION handle_new_user()
+-- Function to update user count when memberships change
+CREATE OR REPLACE FUNCTION update_company_user_count()
+RETURNS TRIGGER AS $$
+BEGIN
+  -- Update current_user_count for the affected company
+  UPDATE companies
+  SET current_user_count = (
+    SELECT COUNT(*)
+    FROM company_memberships
+    WHERE company_id = COALESCE(NEW.company_id, OLD.company_id)
+    AND status = 'active'
+  )
+  WHERE id = COALESCE(NEW.company_id, OLD.company_id);
+
+  RETURN COALESCE(NEW, OLD);
+END;
+$$ LANGUAGE plpgsql;
+
+-- Function to get user emails for team members (needed for components)
+CREATE OR REPLACE FUNCTION get_user_emails_for_members(user_ids uuid[])
+RETURNS TABLE(id uuid, email text) AS $$
+BEGIN
+  RETURN QUERY
+  SELECT u.id, u.email::text
+  FROM auth.users u
+  WHERE u.id = ANY(user_ids);
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+-- Function to automatically create user profile
+CREATE OR REPLACE FUNCTION create_user_profile()
 RETURNS TRIGGER AS $$
 BEGIN
   INSERT INTO user_profiles (id, first_name, last_name)
   VALUES (
     NEW.id,
-    COALESCE(NEW.raw_user_meta_data->>'first_name', ''),
-    COALESCE(NEW.raw_user_meta_data->>'last_name', '')
+    NEW.raw_user_meta_data->>'first_name',
+    NEW.raw_user_meta_data->>'last_name'
   );
   RETURN NEW;
 END;
-$$ LANGUAGE plpgsql SECURITY DEFINER;
+$$ LANGUAGE plpgsql;
 
--- Trigger to create user profile on signup
-CREATE OR REPLACE TRIGGER on_auth_user_created
-  AFTER INSERT ON auth.users
-  FOR EACH ROW EXECUTE FUNCTION handle_new_user();
-
--- Function to update company user count
-CREATE OR REPLACE FUNCTION update_company_user_count()
-RETURNS TRIGGER AS $$
-BEGIN
-  IF TG_OP = 'INSERT' AND NEW.status = 'active' THEN
-    UPDATE companies
-    SET current_user_count = current_user_count + 1,
-        updated_at = now()
-    WHERE id = NEW.company_id;
-  ELSIF TG_OP = 'UPDATE' THEN
-    IF OLD.status != 'active' AND NEW.status = 'active' THEN
-      UPDATE companies
-      SET current_user_count = current_user_count + 1,
-          updated_at = now()
-      WHERE id = NEW.company_id;
-    ELSIF OLD.status = 'active' AND NEW.status != 'active' THEN
-      UPDATE companies
-      SET current_user_count = current_user_count - 1,
-          updated_at = now()
-      WHERE id = NEW.company_id;
-    END IF;
-  ELSIF TG_OP = 'DELETE' AND OLD.status = 'active' THEN
-    UPDATE companies
-    SET current_user_count = current_user_count - 1,
-        updated_at = now()
-    WHERE id = OLD.company_id;
-  END IF;
-
-  RETURN COALESCE(NEW, OLD);
-END;
-$$ LANGUAGE plpgsql SECURITY DEFINER;
-
--- Trigger to update company user count
-CREATE TRIGGER update_company_user_count_trigger
-  AFTER INSERT OR UPDATE OR DELETE ON company_memberships
-  FOR EACH ROW EXECUTE FUNCTION update_company_user_count();
-
--- Function to create audit log entries
-CREATE OR REPLACE FUNCTION create_audit_log(
-  p_company_id uuid,
-  p_user_id uuid,
-  p_event_type text,
-  p_event_category text,
-  p_event_description text,
-  p_resource_type text DEFAULT NULL,
-  p_resource_id text DEFAULT NULL,
-  p_metadata jsonb DEFAULT '{}'
-)
-RETURNS uuid AS $$
-DECLARE
-  log_id uuid;
-BEGIN
-  INSERT INTO audit_logs (
-    company_id, user_id, event_type, event_category,
-    event_description, resource_type, resource_id, metadata
-  )
-  VALUES (
-    p_company_id, p_user_id, p_event_type, p_event_category,
-    p_event_description, p_resource_type, p_resource_id, p_metadata
-  )
-  RETURNING id INTO log_id;
-
-  RETURN log_id;
-END;
-$$ LANGUAGE plpgsql SECURITY DEFINER;
-
--- Function to get company dashboard stats
-CREATE OR REPLACE FUNCTION get_company_dashboard_stats(p_company_id uuid)
-RETURNS TABLE (
+-- Function for analytics
+CREATE OR REPLACE FUNCTION get_company_analytics(target_company_id uuid)
+RETURNS TABLE(
   total_users int,
-  active_subscriptions int,
-  total_revenue_cents bigint,
-  current_period_revenue_cents bigint,
-  trial_days_remaining int
+  active_users int,
+  user_growth numeric,
+  total_invoices int,
+  total_revenue numeric
 ) AS $$
 BEGIN
   RETURN QUERY
   SELECT
-    (SELECT current_user_count FROM companies WHERE id = p_company_id)::int,
-    (SELECT COUNT(*)::int FROM subscriptions WHERE company_id = p_company_id AND status = 'active'),
-    COALESCE((SELECT SUM(amount_paid_cents) FROM invoices WHERE company_id = p_company_id AND status = 'paid'), 0)::bigint,
-    COALESCE((
-      SELECT SUM(amount_paid_cents)
-      FROM invoices
-      WHERE company_id = p_company_id
-        AND status = 'paid'
-        AND invoice_date >= date_trunc('month', now())
-    ), 0)::bigint,
-    GREATEST(0, (
-      SELECT EXTRACT(DAY FROM trial_ends_at - now())::int
-      FROM companies
-      WHERE id = p_company_id
-        AND subscription_status = 'trial'
-    ));
+    (SELECT COUNT(*)::int FROM company_memberships WHERE company_id = target_company_id),
+    (SELECT COUNT(*)::int FROM company_memberships WHERE company_id = target_company_id AND status = 'active'),
+    0.0, -- Placeholder for user growth calculation
+    (SELECT COUNT(*)::int FROM invoices WHERE company_id = target_company_id),
+    (SELECT COALESCE(SUM(total_cents/100.0), 0) FROM invoices WHERE company_id = target_company_id AND status = 'paid')
+  ;
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
+
+-- =============================================================================
+-- TRIGGERS
+-- =============================================================================
+
+-- Trigger to update user count when memberships change
+CREATE TRIGGER trigger_update_company_user_count
+  AFTER INSERT OR UPDATE OR DELETE ON company_memberships
+  FOR EACH ROW
+  EXECUTE FUNCTION update_company_user_count();
+
+-- Trigger to create user profile automatically
+CREATE TRIGGER trigger_create_user_profile
+  AFTER INSERT ON auth.users
+  FOR EACH ROW
+  EXECUTE FUNCTION create_user_profile();
+
+-- =============================================================================
+-- INITIAL DATA
+-- =============================================================================
+
+-- You can add initial data here if needed
+-- For example, system admin user, default companies, etc.
+
+COMMENT ON SCHEMA public IS 'Comprehensive SaaS Multi-tenant Database Schema';
+COMMENT ON TABLE companies IS 'Main tenant organization structure with subscription management';
+COMMENT ON TABLE user_profiles IS 'Extended user information and preferences';
+COMMENT ON TABLE company_memberships IS 'User-company relationships with roles and permissions';
+COMMENT ON TABLE subscriptions IS 'Stripe subscription management and billing cycles';
+COMMENT ON TABLE invoices IS 'Billing history and invoice management';
+COMMENT ON TABLE payments IS 'Payment processing history and status tracking';
+COMMENT ON TABLE audit_logs IS 'Security and compliance activity tracking';
+COMMENT ON TABLE invitations IS 'Team invitation management system';
