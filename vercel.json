@@ -2,7 +2,6 @@
   "buildCommand": "pnpm run build",
   "installCommand": "pnpm install",
   "framework": "vite",
-  "packageManager": "pnpm@8.15.4",
   "build": {
     "env": {
       "NODE_ENV": "production"
