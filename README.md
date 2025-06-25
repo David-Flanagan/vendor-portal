@@ -464,3 +464,38 @@ You now have:
 ---
 
 **Happy Coding!** 🏖️ Remember: Every expert was once a beginner. You've got this!
+
+# Beach Box Monorepo
+
+A comprehensive vending machine management system built with React, TanStack Router, and Supabase.
+
+## Features
+
+- **Machine Management**: Track and manage vending machines with real-time product data
+- **Product Change Requests**: Customers can request product changes with admin approval workflow
+- **Duplicate Product Handling**: Smart slot position tracking for handling duplicate products
+- **Admin Panel**: Complete admin interface for managing machines, products, and change requests
+- **Real-time Pricing**: Dynamic pricing calculations with commission and fee handling
+
+## Tech Stack
+
+- **Frontend**: React + TypeScript + TanStack Router
+- **UI Components**: Custom component library (@beach-box/unify-ui)
+- **Backend**: Supabase (PostgreSQL + Auth + Real-time)
+- **Build Tool**: Vite + Turbo (Monorepo)
+- **Package Manager**: pnpm
+
+## Getting Started
+
+1. Clone the repository
+2. Install dependencies: `pnpm install`
+3. Set up environment variables
+4. Run development server: `pnpm dev`
+
+## Deployment
+
+This project is configured for deployment on Vercel with pnpm package manager support.
+
+---
+
+*Last updated: June 2024*
