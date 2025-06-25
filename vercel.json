@@ -1,4 +1,7 @@
 {
+  "buildCommand": "cd apps/beach-box-landing && pnpm build",
+  "installCommand": "pnpm install",
+  "framework": "vite",
   "build": {
     "env": {
       "NODE_ENV": "production"
